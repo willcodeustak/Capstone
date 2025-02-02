@@ -5,9 +5,11 @@ export default function Navigation() {
 	return (
 		<nav className="w-64 bg-gray-800 text-white h-screen shadow-lg">
 			<div className="p-6 border-b border-gray-700">
-				<h1 className="text-4xl font-extrabold text-white tracking-wide">
-					Budget Tracker
-				</h1>
+				<Link href="/">
+					<h1 className="text-4xl font-extrabold text-white tracking-wide">
+						Budget Tracker
+					</h1>
+				</Link>
 			</div>
 			<ul className="space-y-4 p-6">
 				{/* Dashboard Link */}

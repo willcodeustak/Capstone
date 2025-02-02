@@ -104,6 +104,7 @@ import Dashboard from './dashboard/page';
 import Navigation from './components/dashboard-content/report-content/Navigation';
 import Reports from './dashboard/reports/page';
 // import SignIn from './sign-in/page';
+import Link from 'next/link';
 
 export default function Home() {
 	return (
@@ -111,6 +112,19 @@ export default function Home() {
 			<Navigation />
 			<main className="flex-1 overflow-y-auto p-8">
 				<Suspense fallback={<div>Loading...</div>}>
+					{/* Links to SignUp and Login */}
+					<div className="flex gap-4">
+						<Link href="/signup">
+							<button className="px-4 py-2 bg-blue-500 text-white rounded">
+								Sign Up
+							</button>
+						</Link>
+						<Link href="/login">
+							<button className="px-4 py-2 bg-green-500 text-white rounded">
+								Login
+							</button>
+						</Link>
+					</div>
 					{/* <SignIn /> */}
 					<Dashboard />
 					<Reports></Reports>

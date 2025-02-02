@@ -4,6 +4,8 @@ import prisma from '../../../lib/db';
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
+		console.log('Request Body:', body); // Debugging line
+
 		const { name, amount } = body;
 
 		if (!name || !amount) {

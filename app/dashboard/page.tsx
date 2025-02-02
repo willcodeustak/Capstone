@@ -7,10 +7,19 @@ const DashboardPage = () => {
 	const [budgets, setBudgets] = useState<any[]>([]);
 	const [name, setName] = useState('');
 	const [amount, setAmount] = useState('');
+	const [userId, setUserId] = useState<number | null>(null); // Store logged-in user's ID
 
 	useEffect(() => {
+		fetchUserId(); // Fetch user ID first
 		fetchBudgets();
 	}, []);
+
+	// dummy data function to get user ID (replace with actual auth logic)
+	const fetchUserId = async () => {
+		const response = await fetch('/api/auth/me'); // non working dummy fetch
+		const data = await response.json();
+		setUserId(data.id);
+	};
 
 	const fetchBudgets = async () => {
 		const response = await fetch('/api/budget');
@@ -20,12 +29,18 @@ const DashboardPage = () => {
 
 	const handleCreateBudget = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		if (!userId) {
+			console.error('User not logged in');
+			return;
+		}
+
 		const response = await fetch('/api/budget', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ name, amount }),
+			body: JSON.stringify({ name, amount, userId }),
 		});
 
 		if (!response.ok) {
