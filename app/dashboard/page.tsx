@@ -1,115 +1,87 @@
-// DashboardPage (page.tsx)
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getUser } from '../utils/auth';
+import BudgetForm from '../components/dashboard-content/BudgetForm';
+import BudgetItem from '../components/dashboard-content/BudgetItem';
+import { supabase } from '../../lib/supabase';
+import type { Budget } from '../types/budget';
 
-const DashboardPage = () => {
-	const [budgets, setBudgets] = useState<any[]>([]);
-	const [name, setName] = useState('');
-	const [amount, setAmount] = useState('');
-	const [userId, setUserId] = useState<number | null>(null); // Store logged-in user's ID
+//dashboard main
+export default function DashboardPage() {
+	const [budgets, setBudgets] = useState<Budget[]>([]);
+	const [userId, setUserId] = useState<string | null>(null);
+	const router = useRouter();
 
 	useEffect(() => {
-		fetchUserId(); // Fetch user ID first
-		fetchBudgets();
-	}, []);
+		const checkUser = async () => {
+			const user = await getUser();
+			if (!user) {
+				router.push('/signin');
+			} else {
+				setUserId(user.id);
+				fetchBudgets(user.id);
+			}
+		};
+		checkUser();
+	}, [router]);
 
-	// dummy data function to get user ID (replace with actual auth logic)
-	const fetchUserId = async () => {
-		const response = await fetch('/api/auth/me'); // non working dummy fetch
-		const data = await response.json();
-		setUserId(data.id);
+	const fetchBudgets = async (userId: string) => {
+		const { data, error } = await supabase
+			.from('budgets')
+			.select('*')
+			.eq('userId', userId);
+
+		if (error) {
+			console.error('Error fetching budgets:', error);
+		} else {
+			setBudgets(data || []);
+		}
 	};
 
-	const fetchBudgets = async () => {
-		const response = await fetch('/api/budget');
-		const data = await response.json();
-		setBudgets(data);
-	};
-
-	const handleCreateBudget = async (e: React.FormEvent) => {
-		e.preventDefault();
-
+	const handleCreateBudget = async (name: string, amount: number) => {
 		if (!userId) {
 			console.error('User not logged in');
 			return;
 		}
 
-		const response = await fetch('/api/budget', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ name, amount, userId }),
-		});
+		try {
+			const response = await fetch('/api/budget', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ name, amount }),
+			});
 
-		if (!response.ok) {
-			console.error('Failed to create budget');
-			return;
+			if (response.ok) {
+				const newBudget = await response.json();
+				setBudgets([...budgets, newBudget]);
+			} else {
+				const errorData = await response.json();
+				console.error('Failed to create budget:', errorData.error);
+			}
+		} catch (error) {
+			console.error('An error occurred while creating the budget:', error);
 		}
-
-		const newBudget = await response.json();
-		setBudgets([...budgets, newBudget]);
-		setName('');
-		setAmount('');
 	};
+	if (!userId) {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<div className="p-4">
 			<h1 className="text-4xl font-bold mb-4">Dashboard</h1>
-			<form onSubmit={handleCreateBudget} className="space-y-4">
-				<div>
-					<label
-						htmlFor="name"
-						className="block text-md font-medium text-gray-700"
-					>
-						Budget Name
-					</label>
-					<input
-						type="text"
-						id="name"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						className="mt-1 block w-full h-12 rounded-md border-gray-300 shadow-sm"
-						required
-					/>
-				</div>
-				<div>
-					<label
-						htmlFor="amount"
-						className="block text-md font-medium text-gray-700"
-					>
-						Amount
-					</label>
-					<input
-						type="number"
-						id="amount"
-						value={amount}
-						onChange={(e) => setAmount(e.target.value)}
-						className="mt-1 block w-full h-12 rounded-md border-gray-300 shadow-sm"
-						required
-					/>
-				</div>
-				<button
-					type="submit"
-					className="inline-flex justify-center rounded-md border bg-indigo-600 text-white py-2 px-4"
-				>
-					Create Budget
-				</button>
-			</form>
+			<BudgetForm onSubmit={handleCreateBudget} />
 			<div className="mt-8">
 				<h2 className="text-xl font-semibold">Budgets</h2>
-				<ul>
+				<div className="grid gap-4 mt-4">
 					{budgets.map((budget) => (
-						<li key={budget.id} className="border p-4 rounded-md mt-2">
-							<p>Name: {budget.name}</p>
-							<p>Amount: ${budget.amount}</p>
-						</li>
+						<BudgetItem key={budget.id} budget={budget} />
 					))}
-				</ul>
+				</div>
 			</div>
 		</div>
 	);
-};
-
-export default DashboardPage;
+}

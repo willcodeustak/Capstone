@@ -1,11 +1,18 @@
+'use client';
+
 import Link from 'next/link';
 import { Home, PieChart, LogOut } from 'lucide-react';
+import { useAuth } from '../../../utils/auth';
 
 export default function Navigation() {
+	const { user, signOutAndRedirect } = useAuth();
+	if (!user) {
+		return null; // Or you can return a loading state, or nothing
+	}
 	return (
 		<nav className="w-64 bg-gray-800 text-white h-screen shadow-lg">
 			<div className="p-6 border-b border-gray-700">
-				<Link href="/">
+				<Link href="/dashboard">
 					<h1 className="text-4xl font-extrabold text-white tracking-wide">
 						Budget Tracker
 					</h1>
@@ -15,7 +22,7 @@ export default function Navigation() {
 				{/* Dashboard Link */}
 				<li>
 					<Link
-						href="/"
+						href="/dashboard"
 						className="flex items-center space-x-4 text-gray-300 hover:text-blue-400 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-gray-700"
 					>
 						<Home size={20} />
@@ -36,7 +43,10 @@ export default function Navigation() {
 
 				{/* Logout Button */}
 				<li>
-					<button className="flex items-center space-x-4 text-gray-300 hover:text-red-400 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-gray-700 w-full text-left">
+					<button
+						onClick={signOutAndRedirect}
+						className="flex items-center space-x-4 text-gray-300 hover:text-red-400 p-2 rounded-lg transition-all duration-200 ease-in-out hover:bg-gray-700 w-full text-left"
+					>
 						<LogOut size={20} />
 						<span className="text-xl font-semibold">Logout</span>
 					</button>

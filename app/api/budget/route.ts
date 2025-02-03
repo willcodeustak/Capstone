@@ -1,29 +1,35 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../lib/db';
+import { supabase } from '@/lib/supabase';
+import prisma from '../../../lib/prisma';
 
 export async function POST(request: Request) {
+	const { name, amount } = await request.json();
+
+	if (!name || !amount) {
+		return NextResponse.json(
+			{ error: 'Name and amount are required' },
+			{ status: 400 }
+		);
+	}
+
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	}
+
 	try {
-		const body = await request.json();
-		console.log('Request Body:', body); // Debugging line
-
-		const { name, amount } = body;
-
-		if (!name || !amount) {
-			return NextResponse.json(
-				{ error: 'Missing required fields: name or amount' },
-				{ status: 400 }
-			);
-		}
-
-		const budget = await prisma.budget.create({
+		const newBudget = await prisma.budget.create({
 			data: {
 				name,
 				amount,
-				userId: 1, //  dummy userId ( user authentication later)
+				userId: user.id,
 			},
 		});
 
-		return NextResponse.json(budget);
+		return NextResponse.json(newBudget, { status: 201 });
 	} catch (error) {
 		console.error('Error creating budget:', error);
 		return NextResponse.json(

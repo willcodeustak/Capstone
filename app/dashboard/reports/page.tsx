@@ -1,16 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ExpenseForm from '../../components/dashboard-content/report-content/ExpenseForm';
 import ExpenseChart from '../../components/dashboard-content/report-content/ExpenseChart';
 
 import ExpenseList from '../../components/dashboard-content/report-content/ExpenseList';
 import { useExpenses } from '../../hooks/useExpenses';
+import { useRouter } from 'next/navigation';
+import { getUser } from '../../utils/auth';
 
-// Dashboard component
+//reports main
 export default function Reports() {
 	const [showForm, setShowForm] = useState<boolean>(false);
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [userId, setUserId] = useState<string | null>(null);
+	const router = useRouter();
+	useEffect(() => {
+		const checkUser = async () => {
+			const user = await getUser();
+			if (!user) {
+				router.push('/signin');
+			} else {
+				setUserId(user.id);
+			}
+		};
+		checkUser();
+	}, [router]);
+
 	const {
 		expenses,
 		addExpense,
@@ -23,7 +39,9 @@ export default function Reports() {
 	const dailyExpenses = getExpensesForPeriod(selectedDate, 'daily');
 	const weeklyExpenses = getExpensesForPeriod(selectedDate, 'weekly');
 	const monthlyExpenses = getExpensesForPeriod(selectedDate, 'monthly');
-
+	if (!userId) {
+		return <div>Please sign in first</div>; // Show a loading state until the user is authenticated
+	}
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center">

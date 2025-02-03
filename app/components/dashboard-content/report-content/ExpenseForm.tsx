@@ -27,7 +27,7 @@ export default function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 	const [description, setDescription] = useState<string>('');
 	const [date, setDate] = useState<string>(
 		new Date().toISOString().slice(0, 16)
-	); // YYYY-MM-DDTHH:mm format
+	); // year-month-date format
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
