@@ -39,9 +39,7 @@ export default function Reports() {
 	const dailyExpenses = getExpensesForPeriod(selectedDate, 'daily');
 	const weeklyExpenses = getExpensesForPeriod(selectedDate, 'weekly');
 	const monthlyExpenses = getExpensesForPeriod(selectedDate, 'monthly');
-	if (!userId) {
-		return <div>Please sign in first</div>; // Show a loading state until the user is authenticated
-	}
+
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center">

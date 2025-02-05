@@ -1,6 +1,6 @@
 export interface Budget {
 	id: string;
-	name: string;
+	title: string;
 	amount: number;
-	userId: string;
+	// userId: string;
 }
