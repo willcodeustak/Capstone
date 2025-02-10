@@ -2,6 +2,7 @@ import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
+import { Toaster, toast } from 'react-hot-toast';
 
 export async function signUp(email: string, password: string) {
 	const { data, error } = await supabase.auth.signUp({
@@ -51,6 +52,9 @@ export function useAuth() {
 	}, []);
 	const signOutAndRedirect = async () => {
 		await signOut();
+		toast.success('Until next time! ', {
+			className: 'text-xl p-4 min-w-[300px]',
+		});
 		router.push('/signin');
 	};
 

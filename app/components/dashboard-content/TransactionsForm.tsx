@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Budget } from '../../types/budget';
+import { Toaster, toast } from 'react-hot-toast';
 
 interface TransactionsFormProps {
-	budgets: Budget[]; // drop down 
+	budgets: Budget[]; // drop down
+
 	onTransactionsAdded: (updatedBudgets: Budget[]) => void; //refresh budgets after adding a transaction
 }
 
@@ -54,6 +56,7 @@ export default function TransactionsForm({
 
 		if (budgetError) {
 			alert('Error updating budget. Please try again.');
+
 			return;
 		}
 
@@ -78,6 +81,9 @@ export default function TransactionsForm({
 		const updatedBudgets = budgets.map((budget) =>
 			budget.id === selectedBudgetId ? { ...budget, spent: newSpent } : budget
 		);
+		toast.success('Transaction created 🎉', {
+			className: 'text-xl p-4 min-w-[300px]',
+		});
 		onTransactionsAdded(updatedBudgets);
 
 		// Reset form

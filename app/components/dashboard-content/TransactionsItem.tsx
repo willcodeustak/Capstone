@@ -1,23 +1,26 @@
+'use client';
+
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { TransactionsItemProps } from '@/app/types/transactions';
+import type { TransactionsItemProps } from '@/app/types/transactions';
+import { useConfirmDelete } from '../../hooks/useConfirmDelete';
+import { toast } from 'react-hot-toast';
 
 export default function TransactionsItem({
 	transactions,
 	budgets,
 	onUpdate,
+	budgetColor,
 }: TransactionsItemProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [newTitle, setNewTitle] = useState(transactions.title);
 	const [newAmount, setNewAmount] = useState(transactions.amount);
 	const budget = budgets.find((budget) => budget.id === transactions.budget_id);
+	const { confirmDelete } = useConfirmDelete();
 
-	//Update Transactions
 	const handleUpdate = async () => {
-		//difference in transactions amount
 		const amountDifference = newAmount - transactions.amount;
 
-		// Update the transaction in supa
 		const { error: transactionsError } = await supabase
 			.from('transactions')
 			.update({ title: newTitle, amount: newAmount })
@@ -25,10 +28,10 @@ export default function TransactionsItem({
 
 		if (transactionsError) {
 			console.error('Error updating transactions:', transactionsError);
+			toast.error('Failed to update transaction');
 			return;
 		}
 
-		// Update budget's spent amount
 		const selectedBudget = budgets.find((b) => b.id === transactions.budget_id);
 		if (selectedBudget) {
 			const newSpent = selectedBudget.spent + amountDifference;
@@ -40,98 +43,125 @@ export default function TransactionsItem({
 
 			if (budgetError) {
 				console.error('Error updating budget:', budgetError);
+				toast.error('Failed to update budget');
 				return;
 			}
 		}
 
-		// Refresh data
 		onUpdate();
-		setIsEditing(false); // Exit the edit state
+		setIsEditing(false);
+		toast.success('Transaction updated successfully');
 	};
 
-	//Delete transactions
 	const handleDelete = async () => {
-		//Update budget's spent amount
-		const selectedBudget = budgets.find((b) => b.id === transactions.budget_id);
-		if (selectedBudget) {
-			const newSpent = selectedBudget.spent - transactions.amount;
+		confirmDelete(
+			'Are you sure you want to delete this transaction?',
+			async () => {
+				const selectedBudget = budgets.find(
+					(b) => b.id === transactions.budget_id
+				);
+				if (selectedBudget) {
+					const newSpent = selectedBudget.spent - transactions.amount;
 
-			const { error: budgetError } = await supabase
-				.from('budgets')
-				.update({ spent: newSpent })
-				.eq('id', selectedBudget.id);
+					const { error: budgetError } = await supabase
+						.from('budgets')
+						.update({ spent: newSpent })
+						.eq('id', selectedBudget.id);
 
-			if (budgetError) {
-				console.error('Error updating budget:', budgetError);
-				return;
+					if (budgetError) {
+						console.error('Error updating budget:', budgetError);
+						toast.error('Failed to update budget');
+						return;
+					}
+				}
+
+				const { error } = await supabase
+					.from('transactions')
+					.delete()
+					.eq('id', transactions.id);
+
+				if (error) {
+					console.error('Error deleting transactions:', error);
+					toast.error('Failed to delete transaction');
+					return;
+				}
+
+				onUpdate();
+				// toast.success('Transaction deleted successfully');
 			}
-		}
-
-		//Delete spending
-		const { error } = await supabase
-			.from('transactions')
-			.delete()
-			.eq('id', transactions.id);
-
-		if (error) {
-			console.error('Error deleting transactions:', error);
-			return;
-		}
-
-	
-		onUpdate();
+		);
 	};
 
 	return (
 		<tr>
-			<td>
+			<td className="px-6 py-4 whitespace-nowrap">
 				{isEditing ? (
 					<input
 						type="text"
 						value={newTitle}
 						onChange={(e) => setNewTitle(e.target.value)}
-						className="border p-1"
+						className="border rounded px-2 py-1 w-full"
 					/>
 				) : (
 					transactions.title
 				)}
 			</td>
-			<td>
+			<td className="px-6 py-4 whitespace-nowrap">
 				{isEditing ? (
 					<input
 						type="number"
 						value={newAmount}
 						onChange={(e) => setNewAmount(Number(e.target.value))}
-						className="border p-1"
+						className="border rounded px-2 py-1 w-full"
 					/>
 				) : (
-					`$${transactions.amount}`
+					`$${transactions.amount.toFixed(2)}`
 				)}
 			</td>
-			<td>{new Date(transactions.date).toLocaleDateString()}</td>
-			<td>
+			<td className="px-6 py-4 whitespace-nowrap">
+				{new Date(transactions.date).toLocaleDateString()}
+			</td>
+			<td className="px-6 py-4 whitespace-nowrap">
 				{budget ? (
-					<span className="text-gray-700">{budget.title}</span>
+					<span className={`px-2 py-1 rounded ${budgetColor} text-white`}>
+						{budget.title}
+					</span>
 				) : (
-					'No Budget'
+					'Budget deleted'
 				)}
 			</td>
-			<td>
+			<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 				{isEditing ? (
-					<button onClick={handleUpdate} className="text-green-500 mr-2">
-						Save
-					</button>
+					<>
+						<button
+							onClick={handleUpdate}
+							className="text-green-600 hover:text-green-900 mr-2"
+						>
+							Save
+						</button>
+						<button
+							onClick={() => setIsEditing(false)}
+							className="text-gray-600 hover:text-gray-900"
+						>
+							Cancel
+						</button>
+					</>
 				) : (
-					<button
-						onClick={() => setIsEditing(true)}
-						className="text-blue-500 mr-2"
-					>
-						Edit
-					</button>
+					<>
+						<button
+							onClick={() => setIsEditing(true)}
+							className="text-blue-600 hover:text-blue-900 mr-2"
+						>
+							Edit
+						</button>
+						<button
+							onClick={handleDelete}
+							className="text-red-600 hover:text-red-900"
+						>
+							Delete
+						</button>
+					</>
 				)}
-				<button onClick={handleDelete} className="text-red-500">
-					Delete
-				</button>
 			</td>
 		</tr>
 	);

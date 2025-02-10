@@ -1,7 +1,29 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Budget } from '../../types/budget';
+import { useConfirmDelete } from '../../hooks/useConfirmDelete';
+import { toast } from 'react-hot-toast';
+const BUDGET_COLORS = [
+	'border-blue-500',
+	'border-green-500',
+	'border-yellow-500',
+	'border-red-500',
+	'border-purple-500',
+	'border-pink-500',
+	'border-indigo-500',
+	'border-teal-500',
+];
 
+const PROGRESS_COLORS = [
+	'bg-blue-500',
+	'bg-green-500',
+	'bg-yellow-500',
+	'bg-red-500',
+	'bg-purple-500',
+	'bg-pink-500',
+	'bg-indigo-500',
+	'bg-teal-500',
+];
 interface BudgetItemProps {
 	budget: Budget;
 	onUpdate: () => void; //refresh budgets after update or delete
@@ -11,6 +33,11 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 	const [title, setTitle] = useState(budget.title);
 	const [amount, setAmount] = useState(budget.amount);
 	const [isEditing, setIsEditing] = useState(false);
+	const { confirmDelete } = useConfirmDelete();
+
+	const colorIndex = budget.id.charCodeAt(1) % BUDGET_COLORS.length;
+	const borderColor = BUDGET_COLORS[colorIndex];
+	const progressColor = PROGRESS_COLORS[colorIndex];
 
 	//budget update
 	const handleUpdate = async () => {
@@ -24,25 +51,32 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 		} else {
 			setIsEditing(false);
 			onUpdate();
+			toast.success('Budget updated successfully');
 		}
 	};
 
-	//budget delete
-	const handleDelete = async () => {
-		const { error } = await supabase
-			.from('budgets')
-			.delete()
-			.eq('id', budget.id);
+	const handleDelete = () => {
+		confirmDelete('Delete this budget?', async () => {
+			const { error } = await supabase
+				.from('budgets')
+				.delete()
+				.eq('id', budget.id);
 
-		if (error) {
-			console.error('Error deleting budget:', error);
-		} else {
-			onUpdate();
-		}
+			if (!error) {
+				onUpdate();
+				// toast.success('Budget deleted successfully');
+			} else {
+				toast.error('Failed to delete budget');
+			}
+		});
 	};
+	const percentSpent = (budget.spent || 0) / budget.amount;
+	const isOverBudget = percentSpent > 1;
 
 	return (
-		<div className="p-4 bg-white rounded-lg shadow-md mb-2">
+		<div
+			className={`p-6 rounded-lg shadow-md mb-4 border-4 ${borderColor} border-opacity-50`}
+		>
 			{isEditing ? (
 				<div className="space-y-2">
 					<input
@@ -74,13 +108,20 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 				</div>
 			) : (
 				<div>
-					<h2 className="text-lg font-semibold">{budget.title}</h2>
-					<p className="text-gray-600">Budget: ${budget.amount}</p>
-					<p className="text-gray-600">Spent: ${budget.spent || 0}</p>
+					<h2 className="text-2xl font-bold mb-2">{budget.title}</h2>
+					<div className="flex justify-between text-lg mb-2">
+						<span className="font-bold">
+							Spent: ${(budget.spent || 0).toFixed(2)}
+						</span>
+						<span className="font-bold">
+							Budget: ${budget.amount.toFixed(2)}
+						</span>
+					</div>
+
 					{/* Progress Bar */}
-					<div className="w-full bg-gray-200 rounded-full h-4 mt-4">
+					<div className="w-full bg-gray-200 rounded-full h-4 mb-2">
 						<div
-							className="bg-blue-500 h-4 rounded-full"
+							className={`h-4 rounded-full ${progressColor}`}
 							style={{
 								width: `${Math.min(
 									100,
@@ -89,17 +130,28 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 							}}
 						></div>
 					</div>
-					<p className="text-gray-600">Spent: ${budget.spent || 0}</p>
-					<div className="flex space-x-2 mt-2">
-						<button
-							onClick={() => setIsEditing(true)}
-							className="bg-blue-500 text-white px-4 py-2"
+
+					<div className="flex text-lg mb-4 justify-end">
+						<span
+							className={`font-bold ${
+								isOverBudget ? 'text-red-500' : 'text-green-500'
+							}`}
 						>
-							Edit
+							${(budget.amount - (budget.spent || 0)).toFixed(2)}
+							<span className="font-bold">{'     '}Remaining</span>
+						</span>
+					</div>
+
+					<div className="flex gap-2">
+						<button
+							onClick={() => setIsEditing(!isEditing)}
+							className="text-gray-600 hover:text-gray-800"
+						>
+							{isEditing ? 'Cancel' : 'Edit'}
 						</button>
 						<button
 							onClick={handleDelete}
-							className="bg-red-500 text-white px-4 py-2"
+							className="text-red-600 hover:text-red-800"
 						>
 							Delete
 						</button>

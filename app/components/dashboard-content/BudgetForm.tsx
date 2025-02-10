@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Budget } from '../../types/budget';
+import { Toaster, toast } from 'react-hot-toast';
 
 interface BudgetFormProps {
 	onBudgetAdded: (newBudget: Budget) => void;
@@ -22,6 +23,9 @@ export default function BudgetForm({ onBudgetAdded }: BudgetFormProps) {
 			console.error('Error adding budget:', error);
 		} else if (data) {
 			onBudgetAdded(data);
+			toast.success('Budget Created 🎉', {
+				className: 'text-xl p-4 min-w-[300px]',
+			});
 			setTitle('');
 			setAmount('');
 		}

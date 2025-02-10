@@ -1,19 +1,6 @@
 import TransactionsItem from './TransactionsItem';
-
-interface TableProps {
-	transactions: {
-		id: string;
-		title: string;
-		amount: number;
-		date: string;
-		budget_id: string;
-	}[];
-	budgets: {
-		id: string;
-		title: string;
-	}[];
-	onUpdate: () => void;
-}
+import type { TableProps } from '@/app/types/table';
+import { getBudgetColor } from '../../utils/colors';
 
 export default function Table({ transactions, budgets, onUpdate }: TableProps) {
 	return (
@@ -37,14 +24,22 @@ export default function Table({ transactions, budgets, onUpdate }: TableProps) {
 					</tr>
 				</thead>
 				<tbody>
-					{transactions.map((transactions) => (
-						<TransactionsItem
-							key={transactions.id}
-							transactions={transactions}
-							budgets={budgets} // uhhh
-							onUpdate={onUpdate}
-						/>
-					))}
+					{transactions.map((transaction) => {
+						const budget = budgets.find((b) => b.id === transaction.budget_id);
+						const { bgColor } = budget
+							? getBudgetColor(budget.id)
+							: { bgColor: 'bg-gray-500' };
+
+						return (
+							<TransactionsItem
+								key={transaction.id}
+								transactions={transaction}
+								budgets={budgets}
+								onUpdate={onUpdate}
+								budgetColor={bgColor}
+							/>
+						);
+					})}
 				</tbody>
 			</table>
 		</div>
