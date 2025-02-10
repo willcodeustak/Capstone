@@ -4,15 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BudgetForm from '../components/dashboard-content/BudgetForm';
 import BudgetItem from '../components/dashboard-content/BudgetItem';
-import SpendingForm from '../components/dashboard-content/SpendingForm';
+import TransactionsForm from '../components/dashboard-content/TransactionsForm';
 import { supabase } from '@/lib/supabase';
 import { Budget } from '../types/budget';
+import Table from '../components/dashboard-content/Table';
 
 export default function DashboardPage() {
 	const [budgets, setBudgets] = useState<Budget[]>([]);
+	const [transactions, setTransactions] = useState<any[]>([]);
 	const router = useRouter();
 
-	// Fetch budgets table from supa database
+	// Fetch budgets and transactions
 	const fetchBudgets = async () => {
 		const { data, error } = await supabase.from('budgets').select('*');
 		if (error) {
@@ -22,18 +24,35 @@ export default function DashboardPage() {
 		}
 	};
 
+	const fetchTransactions = async () => {
+		const { data, error } = await supabase.from('transactions').select('*');
+		if (error) {
+			console.error('Error fetching transactions:', error);
+		} else {
+			setTransactions(data);
+		}
+	};
+
 	useEffect(() => {
 		fetchBudgets();
+		fetchTransactions();
 	}, []);
 
-	//new budget creation
+	// Handle new budget creation
 	const onBudgetAdded = (newBudget: Budget) => {
 		setBudgets((prevBudgets) => [...prevBudgets, newBudget]);
 	};
 
+	// Handle new transactions creation
+	const onTransactionsAdded = (updatedBudgets: Budget[]) => {
+		setBudgets(updatedBudgets);
+		fetchTransactions();
+	};
 
-	const onSpendingAdded = (updatedBudgets: Budget[]) => {
-		setBudgets(updatedBudgets); // Update the budgets state with the new data (spending)
+	// Handle transactions updates or deletions
+	const handleTransactionsUpdate = () => {
+		fetchBudgets(); // Refresh budgets to update the spent amount
+		fetchTransactions(); // Refresh transactions to update the table
 	};
 
 	return (
@@ -53,18 +72,24 @@ export default function DashboardPage() {
 			{/* Budget List */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{budgets.map((budget) => (
-					<BudgetItem
-						key={budget.id}
-						budget={budget} 
-						onUpdate={fetchBudgets}
-					/>
+					<BudgetItem key={budget.id} budget={budget} onUpdate={fetchBudgets} />
 				))}
 			</div>
 
-			{/* Spendings Section */}
+			{/* transactions Section */}
 			<div className="mt-12">
-				<h2 className="text-3xl font-semibold text-gray-800 mb-6">Spendings</h2>
-				<SpendingForm budgets={budgets} onSpendingAdded={onSpendingAdded} />
+				<h2 className="text-3xl font-semibold text-gray-800 mb-6">
+					Transactions
+				</h2>
+				<TransactionsForm
+					budgets={budgets}
+					onTransactionsAdded={onTransactionsAdded}
+				/>
+				<Table
+					transactions={transactions}
+					budgets={budgets}
+					onUpdate={handleTransactionsUpdate}
+				/>
 			</div>
 		</div>
 	);

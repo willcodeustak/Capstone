@@ -43,7 +43,7 @@ export default function Reports() {
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center">
-				<h2 className="text-3xl font-bold">Reports</h2>
+				<h2 className="text-3xl font-bold">ExpenseOverview</h2>
 				<button
 					onClick={() => setShowForm(!showForm)}
 					className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

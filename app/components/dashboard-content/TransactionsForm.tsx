@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Budget } from '../../types/budget';
 
-interface SpendingFormProps {
-	budgets: Budget[]; // drop down for list of budgets to select from
-	onSpendingAdded: (updatedBudgets: Budget[]) => void; // Callback to refresh budgets after adding a spending
+interface TransactionsFormProps {
+	budgets: Budget[]; // drop down 
+	onTransactionsAdded: (updatedBudgets: Budget[]) => void; //refresh budgets after adding a transaction
 }
 
-export default function SpendingForm({
+export default function TransactionsForm({
 	budgets,
-	onSpendingAdded,
-}: SpendingFormProps) {
+	onTransactionsAdded,
+}: TransactionsFormProps) {
 	const [title, setTitle] = useState('');
 	const [amount, setAmount] = useState('');
 	const [selectedBudgetId, setSelectedBudgetId] = useState('');
@@ -28,7 +28,7 @@ export default function SpendingForm({
 
 		if (!selectedBudgetId) {
 			console.error('No budget selected');
-			alert('Please select a budget to add spending.');
+			alert('Please select a budget to add Transactions.');
 			return;
 		}
 
@@ -46,35 +46,50 @@ export default function SpendingForm({
 		}
 		const newSpent = (selectedBudget.spent || 0) + Number(amount);
 
-		// Update budget's spent amount in supa database
-		const { error } = await supabase
+		// Update budget's spent amount in the database
+		const { error: budgetError } = await supabase
 			.from('budgets')
 			.update({ spent: newSpent })
 			.eq('id', selectedBudgetId);
 
-		if (error) {
-			// console.error('Error updating budget:', error);
+		if (budgetError) {
 			alert('Error updating budget. Please try again.');
-		} else {
-			//client side state
-			const updatedBudgets = budgets.map((budget) =>
-				budget.id === selectedBudgetId
-					? { ...budget, spent: newSpent } // updates the spent value for the selected budget
-					: budget
-			);
-			onSpendingAdded(updatedBudgets); // Pass the updated budgets to the parent/main component
-
-			// Reset
-			setTitle('');
-			setAmount('');
+			return;
 		}
+
+		// Add the Transactions to the database
+		const { error: transactionsError } = await supabase
+			.from('transactions')
+			.insert([
+				{
+					title,
+					amount: Number(amount),
+					budget_id: selectedBudgetId,
+					date: new Date().toISOString(),
+				},
+			]);
+
+		if (transactionsError) {
+			alert('Error adding Transactions. Please try again.');
+			return;
+		}
+
+		// Update client-side state
+		const updatedBudgets = budgets.map((budget) =>
+			budget.id === selectedBudgetId ? { ...budget, spent: newSpent } : budget
+		);
+		onTransactionsAdded(updatedBudgets);
+
+		// Reset form
+		setTitle('');
+		setAmount('');
 	};
 
-	// If there are no budgets, tell user they need to create a budget first before able to add a spending
+	// If there are no budgets, tell user they need to create a budget first before able to add a Transactions
 	if (budgets.length === 0) {
 		return (
 			<div className="p-4 bg-yellow-100 rounded-lg text-yellow-800">
-				Please create a budget first to add spending.
+				Please create a budget first to add transactions.
 			</div>
 		);
 	}
@@ -85,7 +100,7 @@ export default function SpendingForm({
 				type="text"
 				value={title}
 				onChange={(e) => setTitle(e.target.value)}
-				placeholder="Spending Title"
+				placeholder="Transaction Title"
 				className="border p-2 w-full"
 				required
 			/>
@@ -113,7 +128,7 @@ export default function SpendingForm({
 				))}
 			</select>
 			<button type="submit" className="bg-blue-500 text-white px-4 py-2">
-				Add Spending
+				Add Transaction
 			</button>
 		</form>
 	);

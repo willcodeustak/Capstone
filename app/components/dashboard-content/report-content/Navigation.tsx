@@ -14,7 +14,7 @@ export default function Navigation() {
 			<div className="p-8 border-b border-gray-700">
 				<Link href="/dashboard">
 					<h1 className="text-5xl font-extrabold text-white tracking-wide">
-						Budget Tracker
+						Budget Breeze
 					</h1>
 				</Link>
 			</div>

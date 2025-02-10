@@ -23,7 +23,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 			console.error('Error updating budget:', error);
 		} else {
 			setIsEditing(false);
-			onUpdate(); // refresh list after update
+			onUpdate();
 		}
 	};
 
@@ -37,7 +37,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 		if (error) {
 			console.error('Error deleting budget:', error);
 		} else {
-			onUpdate(); // refresh list after delete
+			onUpdate();
 		}
 	};
 
@@ -89,6 +89,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 							}}
 						></div>
 					</div>
+					<p className="text-gray-600">Spent: ${budget.spent || 0}</p>
 					<div className="flex space-x-2 mt-2">
 						<button
 							onClick={() => setIsEditing(true)}
