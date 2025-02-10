@@ -3,7 +3,8 @@ import { supabase } from '@/lib/supabase';
 import type { Budget } from '../../types/budget';
 
 interface TransactionsFormProps {
-	budgets: Budget[]; // drop down 
+	budgets: Budget[]; // drop down
+
 	onTransactionsAdded: (updatedBudgets: Budget[]) => void; //refresh budgets after adding a transaction
 }
 
@@ -57,7 +58,7 @@ export default function TransactionsForm({
 			return;
 		}
 
-		// Add the Transactions to the database
+		// Add the transactions to the database
 		const { error: transactionsError } = await supabase
 			.from('transactions')
 			.insert([
@@ -85,7 +86,7 @@ export default function TransactionsForm({
 		setAmount('');
 	};
 
-	// If there are no budgets, tell user they need to create a budget first before able to add a Transactions
+	// If there are no budgets, tell user they need to create a budget first before able to add a transaction
 	if (budgets.length === 0) {
 		return (
 			<div className="p-4 bg-yellow-100 rounded-lg text-yellow-800">
