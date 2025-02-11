@@ -12,13 +12,12 @@ import { Toaster } from 'react-hot-toast';
 export default function DashboardPage() {
 	const [budgets, setBudgets] = useState<Budget[]>([]);
 	const [transactions, setTransactions] = useState<any[]>([]);
-	// const router = useRouter();
 
 	const fetchBudgets = async () => {
 		const { data, error } = await supabase
 			.from('budgets')
 			.select('*')
-			.order('created_at', { ascending: true }); // Add this line
+			.order('created_at', { ascending: true });
 
 		if (error) {
 			console.error('Error fetching budgets:', error);
@@ -56,13 +55,13 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen">
+		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen dark:bg-gray-800">
 			<Toaster position="top-right" />
-			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10">
+			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:border-strokedark dark:bg-meta-4 dark:text-white ">
 				Budget Overview
 			</h1>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 dark:border-strokedark dark:bg-meta-4 dark:text-white">
 				<div className="bg-white p-6 rounded-xl shadow-md">
 					<h2 className="text-2xl font-semibold text-gray-700 mb-4">
 						Create Budget
@@ -86,14 +85,18 @@ export default function DashboardPage() {
 					<h2 className="text-3xl font-semibold text-gray-800 mb-6">
 						Your Budgets
 					</h2>
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-						{budgets.map((budget, index) => (
-							<BudgetItem
-								key={budget.id}
-								budget={budget}
-								onUpdate={fetchBudgets}
-							/>
-						))}
+					<div className="relative">
+						<div className="flex overflow-x-auto space-x-4 scrollbar-hide p-2">
+							{budgets.map((budget) => (
+								<div className="min-w-[300px] flex-shrink-0">
+									<BudgetItem
+										key={budget.id}
+										budget={budget}
+										onUpdate={fetchBudgets}
+									/>
+								</div>
+							))}
+						</div>
 					</div>
 				</div>
 

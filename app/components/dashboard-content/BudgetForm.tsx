@@ -47,7 +47,10 @@ export default function BudgetForm({ onBudgetAdded }: BudgetFormProps) {
 				placeholder="Amount"
 				className="border p-2 w-full"
 			/>
-			<button type="submit" className="bg-blue-500 text-white px-4 py-2">
+			<button
+				type="submit"
+				className="bg-blue-500 text-white px-4 py-2 dark:text-white "
+			>
 				Create Budget
 			</button>
 		</form>

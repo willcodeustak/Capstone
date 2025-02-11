@@ -20,7 +20,7 @@ export default function Home() {
 	}, [router]);
 
 	return (
-		<div className="flex items-center justify-center min-h-screen">
+		<div className="flex items-center justify-center min-h-screen ">
 			<p>Loading...</p>
 		</div>
 	);

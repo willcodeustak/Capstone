@@ -130,38 +130,40 @@ export default function TransactionsItem({
 					'Budget deleted'
 				)}
 			</td>
-			<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-				{isEditing ? (
-					<>
-						<button
-							onClick={handleUpdate}
-							className="text-green-600 hover:text-green-900 mr-2"
-						>
-							Save
-						</button>
-						<button
-							onClick={() => setIsEditing(false)}
-							className="text-gray-600 hover:text-gray-900"
-						>
-							Cancel
-						</button>
-					</>
-				) : (
-					<>
-						<button
-							onClick={() => setIsEditing(true)}
-							className="text-blue-600 hover:text-blue-900 mr-2"
-						>
-							Edit
-						</button>
-						<button
-							onClick={handleDelete}
-							className="text-red-600 hover:text-red-900"
-						>
-							Delete
-						</button>
-					</>
-				)}
+			<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+				<div className="flex justify-start gap-2">
+					{isEditing ? (
+						<>
+							<button
+								onClick={handleUpdate}
+								className="text-green-600 hover:text-green-900"
+							>
+								Save
+							</button>
+							<button
+								onClick={() => setIsEditing(false)}
+								className="text-gray-600 hover:text-gray-900"
+							>
+								Cancel
+							</button>
+						</>
+					) : (
+						<>
+							<button
+								onClick={() => setIsEditing(true)}
+								className="text-blue-600 hover:text-blue-900"
+							>
+								Edit
+							</button>
+							<button
+								onClick={handleDelete}
+								className="text-red-600 hover:text-red-900"
+							>
+								Delete
+							</button>
+						</>
+					)}
+				</div>
 			</td>
 		</tr>
 	);

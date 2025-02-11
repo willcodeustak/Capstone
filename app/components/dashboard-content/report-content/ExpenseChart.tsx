@@ -27,20 +27,18 @@ const COLORS = [
 	'#DDA0DD',
 ];
 
-// ExpenseChart component
 export default function ExpenseChart({ expenses }: ExpenseChartProps) {
 	// Aggregate expenses by category
 	const data = expenses.reduce((acc, expense) => {
-		const existingCategory = acc.find((item) => item.name === expense.category);
+		const existingCategory = acc.find((item) => item.name === expense.name); // changed to match property
 		if (existingCategory) {
-			existingCategory.value += expense.amount;
+			existingCategory.value += expense.value; // changed to match property
 		} else {
-			acc.push({ name: expense.category, value: expense.amount });
+			acc.push({ name: expense.name, value: expense.value }); // changed to match property
 		}
 		return acc;
 	}, [] as { name: string; value: number }[]);
 
-	// If there's no data, display a message
 	if (data.length === 0) {
 		return (
 			<p className="text-center text-gray-500">

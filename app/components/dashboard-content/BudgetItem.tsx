@@ -137,8 +137,9 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 								isOverBudget ? 'text-red-500' : 'text-green-500'
 							}`}
 						>
-							${(budget.amount - (budget.spent || 0)).toFixed(2)}
-							<span className="font-bold">{'     '}Remaining</span>
+							${(budget.amount - (budget.spent || 0)).toFixed(2)} {'    '}
+							Remaining
+							<span className="font-bold">{'     '}</span>
 						</span>
 					</div>
 

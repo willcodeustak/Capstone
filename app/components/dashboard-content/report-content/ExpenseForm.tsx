@@ -48,7 +48,10 @@ export default function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4 mb-6">
+		<form
+			onSubmit={handleSubmit}
+			className="space-y-4 mb-6 dark:border-strokedark dark:bg-meta-4 dark:text-white"
+		>
 			<input
 				type="number"
 				placeholder="Amount"
