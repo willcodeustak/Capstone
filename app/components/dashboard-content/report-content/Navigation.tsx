@@ -7,16 +7,16 @@ import { useAuth } from '../../../utils/auth';
 export default function Navigation() {
 	const { user, signOutAndRedirect } = useAuth();
 	if (!user) {
-		return null; // Or you can return a loading state, or nothing
+		return null; // simply hides from user if !user
 	}
 	return (
 		<nav className="w-65 bg-gray-800 text-white h-screen shadow-lg fixed top-0 left-0 z-50">
-			<div className="p-7 border-b border-gray-700">
+			<div className="p-4 border-b border-gray-700">
 				<Link href="/dashboard">
-					<h1 className="text-1xl font-extrabold text-white ">Budget Breeze</h1>
+					<h1 className="text-2xl font-extrabold text-white ">Budget Breeze</h1>
 				</Link>
 			</div>
-			<ul className="space-y-6 p-8">
+			<ul className="space-y-6 p-4">
 				{/* Dashboard Link */}
 				<li>
 					<Link
@@ -37,17 +37,6 @@ export default function Navigation() {
 						<PieChart size={25} />
 						<span className="text-1xl font-semibold">Reports</span>
 					</Link>
-				</li>
-
-				{/* Logout Button */}
-				<li>
-					<button
-						onClick={signOutAndRedirect}
-						className="flex items-center space-x-5 text-gray-300 hover:text-red-400 p-3 rounded-lg transition-all duration-200 ease-in-out hover:bg-gray-700 w-full text-left"
-					>
-						<LogOut size={25} />
-						<span className="text-1xl font-semibold">Logout</span>
-					</button>
 				</li>
 			</ul>
 		</nav>

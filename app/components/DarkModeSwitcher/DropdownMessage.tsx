@@ -113,7 +113,7 @@ const DropdownMessage = () => {
 	}, [messages]);
 
 	return (
-		<li className="relative">
+		<li className="relative list-none">
 			<button
 				className="relative flex h-9 w-9 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
 				onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -122,7 +122,7 @@ const DropdownMessage = () => {
 			</button>
 
 			{dropdownOpen && (
-				<div className="absolute -right-16 mt-2.5 flex h-100 w-80 flex-col rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+				<div className="absolute text-gray-800 -right-16 mt-2.5 flex h-100 w-80 flex-col rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 					<div className="flex items-center justify-between bg-indigo-600 text-white p-3">
 						<div className="flex items-center">
 							<img src={chatbot} alt="Logo" className="w-8 h-8" />
@@ -133,7 +133,10 @@ const DropdownMessage = () => {
 						</div>
 						<button
 							className="text-white text-xl font-bold"
-							onClick={() => setDropdownOpen(false)}
+							onClick={() => {
+								setDropdownOpen(false);
+								setShowPredefinedQuestions(true); 
+							}}
 						>
 							×
 						</button>

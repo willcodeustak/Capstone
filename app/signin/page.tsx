@@ -1,11 +1,13 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp, signIn } from '../utils/auth';
+import Link from 'next/link';
+import { signIn } from '../utils/auth';
+import type { AuthError } from '@supabase/supabase-js';
 import { Toaster, toast } from 'react-hot-toast';
+import Image from 'next/image';
+
 import signInPicture from '../images/signInPicture.jpg';
 
 function LeftPanel() {
@@ -31,7 +33,7 @@ function LeftPanel() {
 	);
 }
 
-export default function AuthPage({ isSignUp = false }) {
+export default function SigninPage() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
@@ -41,22 +43,16 @@ export default function AuthPage({ isSignUp = false }) {
 		e.preventDefault();
 		setError(null);
 		try {
-			const { error } = isSignUp
-				? await signUp(email, password)
-				: await signIn(email, password);
+			const { error } = await signIn(email, password);
 			if (error) throw error;
 
-			toast.success(
-				isSignUp
-					? 'Verification has been sent to your email! 🎉'
-					: 'Welcome back 🎉',
-				{
-					className: 'text-xl p-4 min-w-[300px]',
-				}
-			);
-			setTimeout(() => router.push(isSignUp ? '/signin' : '/dashboard'), 1500);
+			toast.success('Welcome back 🎉', {
+				className: 'text-xl p-4 min-w-[300px]',
+			});
+			setTimeout(() => router.push('/dashboard'), 1500);
 		} catch (err) {
-			toast.error(err.message, {
+			const authError = err as AuthError;
+			toast.error(authError.message, {
 				className: 'text-xl p-4 min-w-[300px]',
 			});
 		}
@@ -68,10 +64,10 @@ export default function AuthPage({ isSignUp = false }) {
 			<LeftPanel />
 
 			<div className="w-1/2 flex items-center justify-center bg-white-50 p-12 relative">
-				<div className="absolute left-0  h-1/2 w-px bg-gray-300"></div>
+				<div className="absolute left-0 h-1/2 w-px bg-gray-300"></div>
 				<div className="max-w-md w-full space-y-8">
 					<h2 className="text-3xl font-extrabold text-gray-900 text-center">
-						{isSignUp ? 'Create a new account' : 'Sign in to your account'}
+						Sign in to your account
 					</h2>
 
 					<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -86,7 +82,7 @@ export default function AuthPage({ isSignUp = false }) {
 									type="email"
 									autoComplete="email"
 									required
-									className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
 									placeholder="Email address"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -100,9 +96,9 @@ export default function AuthPage({ isSignUp = false }) {
 									id="password"
 									name="password"
 									type="password"
-									autoComplete={isSignUp ? 'new-password' : 'current-password'}
+									autoComplete="current-password"
 									required
-									className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
 									placeholder="Password"
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}
@@ -116,18 +112,16 @@ export default function AuthPage({ isSignUp = false }) {
 							type="submit"
 							className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 						>
-							{isSignUp ? 'Sign up' : 'Sign in'}
+							Sign in
 						</button>
 					</form>
 
 					<div className="text-sm text-center">
 						<Link
-							href={isSignUp ? '/signin' : '/signup'}
+							href="/signup"
 							className="font-medium text-indigo-600 hover:text-indigo-500"
 						>
-							{isSignUp
-								? 'Already have an account? Sign in'
-								: "Don't have an account? Sign up"}
+							Don't have an account? Sign up
 						</Link>
 					</div>
 				</div>

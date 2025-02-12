@@ -10,31 +10,35 @@ import {
 } from 'recharts';
 import type { Expense } from '../../../types/expense';
 
-interface ExpenseChartProps {
-	expenses: Expense[];
-}
-
 const COLORS = [
-	'#0088FE',
-	'#00C49F',
-	'#FFBB28',
-	'#FF8042',
-	'#8884D8',
-	'#82CA9D',
-	'#FFA07A',
-	'#20B2AA',
-	'#B0C4DE',
-	'#DDA0DD',
+	'#0088FE', // Blue
+	'#00C49F', // Teal
+	'#FFBB28', // Yellow
+	'#FF8042', // Orange
+	'#8884D8', // Purple
+	'#82CA9D', // Green
+	'#FFA07A', // Salmon
+	'#20B2AA', // Light Sea Green
+	'#B0C4DE', // Light Steel Blue
+	'#DDA0DD', // Plum
 ];
 
+const getColorIndex = (title: string) => {
+	let hash = 0;
+	for (let i = 0; i < title.length; i++) {
+		hash = (hash << 5) - hash + title.charCodeAt(i);
+		hash |= 0;
+	}
+	return Math.abs(hash) % COLORS.length;
+};
+
 export default function ExpenseChart({ expenses }: ExpenseChartProps) {
-	// Aggregate expenses by category
 	const data = expenses.reduce((acc, expense) => {
-		const existingCategory = acc.find((item) => item.name === expense.name); // changed to match property
+		const existingCategory = acc.find((item) => item.name === expense.name);
 		if (existingCategory) {
-			existingCategory.value += expense.value; // changed to match property
+			existingCategory.value += expense.value;
 		} else {
-			acc.push({ name: expense.name, value: expense.value }); // changed to match property
+			acc.push({ name: expense.name, value: expense.value });
 		}
 		return acc;
 	}, [] as { name: string; value: number }[]);
@@ -60,7 +64,10 @@ export default function ExpenseChart({ expenses }: ExpenseChartProps) {
 					dataKey="value"
 				>
 					{data.map((entry, index) => (
-						<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+						<Cell
+							key={`cell-${index}`}
+							fill={COLORS[getColorIndex(entry.name)]}
+						/>
 					))}
 				</Pie>
 				<Tooltip />

@@ -27,14 +27,17 @@ export default function DashboardPage() {
 	};
 
 	const fetchTransactions = async () => {
-		const { data, error } = await supabase.from('transactions').select('*');
+		const { data, error } = await supabase
+			.from('transactions')
+			.select('*')
+			.order('date', { ascending: false }); // Sort by date in descending order
+
 		if (error) {
 			console.error('Error fetching transactions:', error);
 		} else {
 			setTransactions(data);
 		}
 	};
-
 	useEffect(() => {
 		fetchBudgets();
 		fetchTransactions();
@@ -55,22 +58,23 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen dark:bg-gray-800">
-			<Toaster position="top-right" />
-			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:border-strokedark dark:bg-meta-4 dark:text-white ">
+		<>
+			<Toaster position="top-center" />
+			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:text-white">
 				Budget Overview
 			</h1>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 dark:border-strokedark dark:bg-meta-4 dark:text-white">
-				<div className="bg-white p-6 rounded-xl shadow-md">
-					<h2 className="text-2xl font-semibold text-gray-700 mb-4">
+			{/* Budget and Transaction Forms */}
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700">
+					<h2 className="text-2xl font-semibold text-gray-700 mb-4 dark:text-white">
 						Create Budget
 					</h2>
 					<BudgetForm onBudgetAdded={onBudgetAdded} />
 				</div>
 
-				<div className="bg-white p-6 rounded-xl shadow-md">
-					<h2 className="text-2xl font-semibold text-gray-700 mb-4">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700">
+					<h2 className="text-2xl font-semibold text-gray-700 mb-4 dark:text-white">
 						Add Transaction
 					</h2>
 					<TransactionsForm
@@ -80,28 +84,26 @@ export default function DashboardPage() {
 				</div>
 			</div>
 
+			{/* Budgets Section */}
 			<div className="space-y-8">
 				<div>
-					<h2 className="text-3xl font-semibold text-gray-800 mb-6">
+					<h2 className="text-3xl font-semibold text-gray-800 mb-6 dark:text-white">
 						Your Budgets
 					</h2>
-					<div className="relative">
-						<div className="flex overflow-x-auto space-x-4 scrollbar-hide p-2">
+					<div className="w-full">
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 							{budgets.map((budget) => (
-								<div className="min-w-[300px] flex-shrink-0">
-									<BudgetItem
-										key={budget.id}
-										budget={budget}
-										onUpdate={fetchBudgets}
-									/>
+								<div key={budget.id}>
+									<BudgetItem budget={budget} onUpdate={fetchBudgets} />
 								</div>
 							))}
 						</div>
 					</div>
 				</div>
 
+				{/* Transactions Section */}
 				<div>
-					<h2 className="text-3xl font-semibold text-gray-800 mb-6">
+					<h2 className="text-3xl font-semibold text-gray-800 mb-6 dark:text-white">
 						Transactions
 					</h2>
 					<Table
@@ -111,6 +113,6 @@ export default function DashboardPage() {
 					/>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }

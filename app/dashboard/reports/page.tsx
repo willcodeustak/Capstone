@@ -80,35 +80,35 @@ export default function Reports() {
 	const monthlyTransactions = filterTransactionsByPeriod('month');
 
 	return (
-		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen">
-			<Toaster position="top-right" />
-			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10">
+		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen dark:bg-gray-800">
+			<Toaster position="top-center" />
+			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:text-white">
 				Spending Reports
 			</h1>
 
-			<div className="flex justify-end mb-8">
+			<div className="flex justify-end mb-8 dark:bg-gray-800 dark:text-white">
 				<input
 					type="date"
 					value={selectedDate.toISOString().split('T')[0]}
 					onChange={(e) => setSelectedDate(new Date(e.target.value))}
-					className="border p-2 rounded"
+					className="border p-2 rounded dark:bg-gray-800 dark:text-white"
 				/>
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-				<div className="bg-white p-6 rounded-xl shadow-md">
-					<h2 className="text-xl font-semibold mb-4">Daily Total</h2>
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
+					<h2 className="text-xl font-semibold mb-4 ">Daily Total</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(dailyTransactions).toFixed(2)}
 					</p>
 				</div>
-				<div className="bg-white p-6 rounded-xl shadow-md">
-					<h2 className="text-xl font-semibold mb-4">Weekly Total</h2>
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
+					<h2 className="text-xl font-semibold mb-4 ">Weekly Total</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(weeklyTransactions).toFixed(2)}
 					</p>
 				</div>
-				<div className="bg-white p-6 rounded-xl shadow-md">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Monthly Total</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(monthlyTransactions).toFixed(2)}
@@ -116,16 +116,16 @@ export default function Reports() {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-				<div className="bg-white p-6 rounded-xl shadow-md">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Daily Breakdown</h2>
 					<ExpenseChart expenses={processChartData(dailyTransactions)} />
 				</div>
-				<div className="bg-white p-6 rounded-xl shadow-md">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Weekly Breakdown</h2>
 					<ExpenseChart expenses={processChartData(weeklyTransactions)} />
 				</div>
-				<div className="bg-white p-6 rounded-xl shadow-md">
+				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Monthly Breakdown</h2>
 					<ExpenseChart expenses={processChartData(monthlyTransactions)} />
 				</div>

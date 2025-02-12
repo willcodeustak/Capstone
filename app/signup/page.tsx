@@ -35,13 +35,15 @@ function LeftPanel() {
 export default function SignUp() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [displayName, setDisplayName] = useState('');
+
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
-		const { error } = await signUp(email, password);
+		const { error } = await signUp(email, password, displayName);
 		if (error) {
 			toast.error(error.message);
 		} else {
@@ -53,7 +55,7 @@ export default function SignUp() {
 	};
 
 	const handleBack = () => {
-		router.back(); // Back button
+		router.back();
 	};
 
 	return (
@@ -70,6 +72,19 @@ export default function SignUp() {
 
 					<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
 						<div className="rounded-md shadow-sm -space-y-px">
+							<div>
+								<label htmlFor="user-name" className="sr-only">
+									User Name
+								</label>
+								<input
+									type="text"
+									placeholder="Display Name"
+									value={displayName}
+									onChange={(e) => setDisplayName(e.target.value)}
+									required
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
+								/>
+							</div>
 							<div>
 								<label htmlFor="email-address" className="sr-only">
 									Email address

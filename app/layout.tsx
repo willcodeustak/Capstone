@@ -15,10 +15,11 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={inter.className}>
 				<TopNav />
-
 				<div className="flex">
 					<Navigation />
-					<main className="flex-1 p-8">{children}</main>
+					<main className="flex-1 p-8 bg-gray-50 dark:bg-gray-800 pl-72">
+						{children}
+					</main>
 				</div>
 			</body>
 		</html>

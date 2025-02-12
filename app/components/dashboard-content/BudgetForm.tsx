@@ -38,7 +38,7 @@ export default function BudgetForm({ onBudgetAdded }: BudgetFormProps) {
 				value={title}
 				onChange={(e) => setTitle(e.target.value)}
 				placeholder="Budget Name"
-				className="border p-2 w-full"
+				className="border p-2 w-full "
 			/>
 			<input
 				type="number"
