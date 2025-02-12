@@ -1,8 +1,8 @@
 'use client';
 
-import DarkModeSwitcher from '../../DarkModeSwitcher/DarkModeSwitcher';
-import DropdownMessage from '../../DarkModeSwitcher/DropdownMessage';
-import { useAuth } from '../../../utils/auth';
+import DarkModeSwitcher from './DarkModeSwitcher';
+import DropdownMessage from './DropdownMessage';
+import { useAuth } from '../../utils/auth';
 import { supabase } from '@/lib/supabase';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
