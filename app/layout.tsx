@@ -3,7 +3,7 @@ import './globals.css';
 import { Inter } from 'next/font/google';
 import Navigation from './components/dashboard-content/report-content/Navigation';
 import type React from 'react';
-import TopNav from '../app/components/dashboard-content/report-content/TopNav';
+import TopNav from './components/navbar-content/TopNav';
 import { useEffect } from 'react';
 import { useAuth } from './utils/auth';
 import useColorMode from './hooks/useColorMode';
