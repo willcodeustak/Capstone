@@ -7,14 +7,13 @@ import { signUp } from '../utils/auth';
 import { Toaster, toast } from 'react-hot-toast';
 import signInPicture from '../images/signInPicture.jpg';
 import Image from 'next/image';
-import Link from 'next/link';
 
 function LeftPanel() {
 	return (
-		<div className="flex flex-1 flex-col justify-center items-center bg-white-50 text-black p-12">
-			<div className="text-center">
-				<h2 className="text-4xl font-bold mb-4">Welcome to BudgetBreeze</h2>
-				<p className="text-xl">
+		<div className="flex flex-1 flex-col justify-center items-start bg-gradient-to-br to-indigo-600 text-black p-12 ">
+			<div className="text-left">
+				<h2 className="text-5xl font-extrabold mb-4">BudgetBreeze</h2>
+				<p className="text-xl italic">
 					Personal budgeting is a key step toward financial freedom. Start with
 					BudgetBreeze today.
 				</p>

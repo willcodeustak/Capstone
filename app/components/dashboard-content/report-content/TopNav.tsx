@@ -87,7 +87,7 @@ export default function Navigation() {
 												value={newPassword}
 												onChange={(e) => setNewPassword(e.target.value)}
 												placeholder="New Password"
-												className="w-full px-2 py-1 border rounded dark:bg-gray-600 dark:text-white"
+												className="w-full px-2 py-1 border rounded dark:bg-gray-600 text-black dark:text-white"
 											/>
 											<div className="flex gap-2 mt-2">
 												<button

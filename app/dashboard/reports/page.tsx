@@ -89,7 +89,7 @@ export default function Reports() {
 		<div className="p-8 max-w-7xl mx-auto bg-gray-50 min-h-screen dark:bg-gray-800">
 			<Toaster position="top-center" />
 			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:text-white">
-				Spending Reports
+				Expenses Overview
 			</h1>
 
 			<div className="flex justify-end mb-8 dark:bg-gray-800 dark:text-white">

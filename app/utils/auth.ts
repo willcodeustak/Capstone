@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { Toaster, toast } from 'react-hot-toast';
+import useColorMode from '../hooks/useColorMode';
 
 export async function signUp(
 	email: string,
@@ -46,6 +47,7 @@ export function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
+	const [colorMode, setColorMode] = useColorMode();
 
 	useEffect(() => {
 		const {
@@ -64,8 +66,11 @@ export function useAuth() {
 		toast.success('Until next time! ', {
 			className: 'text-xl p-4 min-w-[300px]',
 		});
+		setUser(null);
+		setColorMode('light');
 		router.push('/signin');
 	};
+	// await supabase.auth.signOut();
 
 	return { user, loading, signUp, signIn, signOutAndRedirect, getUser };
 }

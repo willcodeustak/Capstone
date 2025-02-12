@@ -7,15 +7,16 @@ import { signIn } from '../utils/auth';
 import type { AuthError } from '@supabase/supabase-js';
 import { Toaster, toast } from 'react-hot-toast';
 import Image from 'next/image';
+import { getUser } from '../utils/auth';
 
 import signInPicture from '../images/signInPicture.jpg';
 
 function LeftPanel() {
 	return (
-		<div className="flex flex-1 flex-col justify-center items-center bg-white-50 text-black p-12">
-			<div className="text-center">
-				<h2 className="text-4xl font-bold mb-4">Welcome to BudgetBreeze</h2>
-				<p className="text-xl">
+		<div className="flex flex-1 flex-col justify-center items-start bg-gradient-to-br to-indigo-600 text-black p-12">
+			<div className="text-left">
+				<h2 className="text-5xl font-extrabold mb-4">BudgetBreeze</h2>
+				<p className="text-xl italic">
 					Personal budgeting is a key step toward financial freedom. Start with
 					BudgetBreeze today.
 				</p>
@@ -46,9 +47,14 @@ export default function SigninPage() {
 			const { error } = await signIn(email, password);
 			if (error) throw error;
 
-			toast.success('Welcome back 🎉', {
+			const user = await getUser();
+
+			const displayName = user?.user_metadata?.display_name || 'User';
+
+			toast.success(`Welcome back, ${displayName} 🎉`, {
 				className: 'text-xl p-4 min-w-[300px]',
 			});
+
 			setTimeout(() => router.push('/dashboard'), 1500);
 		} catch (err) {
 			const authError = err as AuthError;

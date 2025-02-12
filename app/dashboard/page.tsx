@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import BudgetForm from '../components/dashboard-content/BudgetForm';
 import BudgetItem from '../components/dashboard-content/BudgetItem';
@@ -12,6 +11,9 @@ import { Toaster } from 'react-hot-toast';
 export default function DashboardPage() {
 	const [budgets, setBudgets] = useState<Budget[]>([]);
 	const [transactions, setTransactions] = useState<any[]>([]);
+	const [visibleBudgets, setVisibleBudgets] = useState<Budget[]>([]);
+	const [page, setPage] = useState(0);
+	const [isCascading, setIsCascading] = useState(true); 
 
 	const fetchBudgets = async () => {
 		const { data, error } = await supabase
@@ -30,7 +32,7 @@ export default function DashboardPage() {
 		const { data, error } = await supabase
 			.from('transactions')
 			.select('*')
-			.order('date', { ascending: false }); // Sort by date in descending order
+			.order('date', { ascending: false });
 
 		if (error) {
 			console.error('Error fetching transactions:', error);
@@ -38,10 +40,17 @@ export default function DashboardPage() {
 			setTransactions(data);
 		}
 	};
+
 	useEffect(() => {
 		fetchBudgets();
 		fetchTransactions();
 	}, []);
+
+	useEffect(() => {
+		const start = page * 8;
+		const end = start + 8;
+		setVisibleBudgets(budgets.slice(start, end));
+	}, [budgets, page]);
 
 	const onBudgetAdded = (newBudget: Budget) => {
 		setBudgets((prevBudgets) => [...prevBudgets, newBudget]);
@@ -55,6 +64,18 @@ export default function DashboardPage() {
 	const handleTransactionsUpdate = () => {
 		fetchBudgets();
 		fetchTransactions();
+	};
+
+	const nextPage = () => {
+		if ((page + 1) * 8 < budgets.length) {
+			setPage(page + 1); 
+		}
+	};
+
+	const prevPage = () => {
+		if (page > 0) {
+			setPage(page - 1); 
+		}
 	};
 
 	return (
@@ -91,20 +112,63 @@ export default function DashboardPage() {
 						Your Budgets
 					</h2>
 					<div className="w-full">
-						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-							{budgets.map((budget, index) => (
-								<div key={budget.id}>
-									<BudgetItem
-										budget={budget}
-										index={index}
-										onUpdate={fetchBudgets}
-									/>
-								</div>
-							))}
+						<div
+							className={`grid ${
+								isCascading
+									? 'grid-cols-4' 
+									: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' 
+							} gap-6`}
+						>
+							{isCascading
+								? budgets.map((budget, index) => (
+										<div key={budget.id}>
+											<BudgetItem
+												budget={budget}
+												index={index}
+												onUpdate={fetchBudgets}
+											/>
+										</div>
+								  ))
+								: visibleBudgets.map((budget, index) => (
+										<div key={budget.id}>
+											<BudgetItem
+												budget={budget}
+												index={index}
+												onUpdate={fetchBudgets}
+											/>
+										</div>
+								  ))}
 						</div>
 					</div>
-				</div>
 
+					{!isCascading && (
+						<div className="flex justify-between mt-6">
+							<button
+								onClick={prevPage}
+								className="bg-gray-300 px-4 py-2 rounded-md disabled:opacity-50"
+								disabled={page === 0}
+							>
+								Previous
+							</button>
+							<button
+								onClick={nextPage}
+								className="bg-gray-300 px-4 py-2 rounded-md disabled:opacity-50"
+								disabled={(page + 1) * 8 >= budgets.length}
+							>
+								Next
+							</button>
+						</div>
+					)}
+				</div>
+				{/* Toggle Button for Layout */}
+				<div className="mb-6 text-center">
+					<button
+						onClick={() => setIsCascading(!isCascading)}
+						className="px-4 py-2 bg-blue-500 text-white rounded-md"
+					>
+						Toggle {isCascading ? 'Grid Layout' : 'Cascade Layout'}
+					</button>
+				</div>
 				{/* Transactions Section */}
 				<div>
 					<h2 className="text-3xl font-semibold text-gray-800 mb-6 dark:text-white">
