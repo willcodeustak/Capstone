@@ -59,17 +59,12 @@ export function useAuth() {
 		// like a break call but for listening for auth state
 		return () => subscription.unsubscribe();
 	}, []);
-
 	const signOutAndRedirect = async () => {
-		const { error } = await supabase.auth.signOut();
-		if (!error) {
-			// Reset dark mode to light mode
-			localStorage.setItem('color-mode', 'light');
-			window.dispatchEvent(new Event('storage')); // Trigger storage event
-			router.push('/signin');
-		} else {
-			console.error('Error signing out:', error);
-		}
+		await signOut();
+		toast.success('Until next time! ', {
+			className: 'text-xl p-4 min-w-[300px]',
+		});
+		router.push('/signin');
 	};
 
 	return { user, loading, signUp, signIn, signOutAndRedirect, getUser };

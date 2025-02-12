@@ -3,21 +3,26 @@ import { supabase } from '@/lib/supabase';
 import type { Budget } from '../../types/budget';
 import { useConfirmDelete } from '../../hooks/useConfirmDelete';
 import { toast } from 'react-hot-toast';
-import { getBudgetColor } from '../../utils/colors'; 
+import { getBudgetColor } from '../../utils/colors';
 
 interface BudgetItemProps {
 	budget: Budget;
-	onUpdate: () => void; // Refresh budgets after update or delete
+	index: number;
+	onUpdate: () => void;
 }
 
-export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
+export default function BudgetItem({
+	budget,
+	index,
+	onUpdate,
+}: BudgetItemProps) {
 	const [title, setTitle] = useState(budget.title);
 	const [amount, setAmount] = useState(budget.amount);
 	const [isEditing, setIsEditing] = useState(false);
 	const { confirmDelete } = useConfirmDelete();
 
-	// testing unique color budget
-	const { borderColor, bgColor } = getBudgetColor(budget.id);
+	// Apply unique color based on index
+	const { borderColor, bgColor } = getBudgetColor(index);
 
 	const handleUpdate = async () => {
 		const { error } = await supabase
@@ -79,7 +84,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 						</button>
 						<button
 							onClick={() => setIsEditing(false)}
-							className="bg-gray-500 text-white px-4 py-2 "
+							className="bg-gray-500 text-white px-4 py-2"
 						>
 							Cancel
 						</button>
@@ -87,9 +92,8 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 				</div>
 			) : (
 				<div>
-					<div className="flex  text-lg mb-2">
+					<div className="flex text-lg mb-2">
 						<h2 className="text-2xl font-bold mb-2">{budget.title}</h2>
-
 						<span className="font-bold ml-auto">
 							Budget: ${budget.amount.toFixed(2)}
 						</span>
@@ -108,7 +112,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 						></div>
 					</div>
 
-					<div className="flex text-lg mb-4 justify-end">
+					<div className="flex text-lg mb-4 justify-between">
 						<span className="font-bold">
 							${(budget.spent || 0).toFixed(2)} Spent
 						</span>
@@ -117,9 +121,7 @@ export default function BudgetItem({ budget, onUpdate }: BudgetItemProps) {
 								isOverBudget ? 'text-red-500' : 'text-green-500'
 							}`}
 						>
-							${(budget.amount - (budget.spent || 0)).toFixed(2)} {'    '}
-							Remaining
-							<span className="font-bold">{'     '}</span>
+							${(budget.amount - (budget.spent || 0)).toFixed(2)} Remaining
 						</span>
 					</div>
 

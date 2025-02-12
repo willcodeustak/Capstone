@@ -57,9 +57,9 @@ export default function Navigation() {
 						<div className="relative">
 							<button
 								onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-								className="flex items-center gap-2 hover:bg-gray-700 px-3 py-2 rounded-lg transition-colors"
+								className="flex items-center gap-2 hover:bg-gray-700 px-3 py-3 rounded-lg transition-colors"
 							>
-								<span className="font-medium">
+								<span className="font-extrabold text-white">
 									{user.user_metadata?.display_name ||
 										user.email?.split('@')[0]}
 								</span>

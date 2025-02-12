@@ -13,7 +13,7 @@ export default function Navigation() {
 		<nav className="w-65 bg-gray-800 text-white h-screen shadow-lg fixed top-0 left-0 z-50">
 			<div className="p-4 border-b border-gray-700">
 				<Link href="/dashboard">
-					<h1 className="text-2xl font-extrabold text-white ">Budget Breeze</h1>
+					<h1 className="text-3xl font-extrabold text-white ">Budget Breeze</h1>
 				</Link>
 			</div>
 			<ul className="space-y-6 p-4">

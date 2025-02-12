@@ -8,40 +8,16 @@ import {
 	Legend,
 	Tooltip,
 } from 'recharts';
-import type { Expense } from '../../../types/expense';
+import type { Budget } from '../../../types/budget';
+import { getBudgetColor } from '../../../utils/colors';
 
-const COLORS = [
-	'#0088FE', // Blue
-	'#00C49F', // Teal
-	'#FFBB28', // Yellow
-	'#FF8042', // Orange
-	'#8884D8', // Purple
-	'#82CA9D', // Green
-	'#FFA07A', // Salmon
-	'#20B2AA', // Light Sea Green
-	'#B0C4DE', // Light Steel Blue
-	'#DDA0DD', // Plum
-];
+interface ExpenseChartProps {
+	expenses: { name: string; value: number; budgetId?: string }[];
+	budgets: Budget[];
+}
 
-const getColorIndex = (title: string) => {
-	let hash = 0;
-	for (let i = 0; i < title.length; i++) {
-		hash = (hash << 5) - hash + title.charCodeAt(i);
-		hash |= 0;
-	}
-	return Math.abs(hash) % COLORS.length;
-};
-
-export default function ExpenseChart({ expenses }: ExpenseChartProps) {
-	const data = expenses.reduce((acc, expense) => {
-		const existingCategory = acc.find((item) => item.name === expense.name);
-		if (existingCategory) {
-			existingCategory.value += expense.value;
-		} else {
-			acc.push({ name: expense.name, value: expense.value });
-		}
-		return acc;
-	}, [] as { name: string; value: number }[]);
+export default function ExpenseChart({ expenses, budgets }: ExpenseChartProps) {
+	const data = expenses;
 
 	if (data.length === 0) {
 		return (
@@ -63,12 +39,48 @@ export default function ExpenseChart({ expenses }: ExpenseChartProps) {
 					fill="#8884d8"
 					dataKey="value"
 				>
-					{data.map((entry, index) => (
-						<Cell
-							key={`cell-${index}`}
-							fill={COLORS[getColorIndex(entry.name)]}
-						/>
-					))}
+					{data.map((entry, index) => {
+						//find the budget associated with the expense
+						const budget = budgets.find((b) =>
+							entry.budgetId ? b.id === entry.budgetId : b.title === entry.name
+						);
+						//get the index of the budget in the budgets array
+						const budgetIndex = budget ? budgets.indexOf(budget) : -1;
+						//use the same getBudgetColor function to get the color
+						const { bgColor } =
+							budgetIndex !== -1
+								? getBudgetColor(budgetIndex)
+								: { bgColor: 'bg-gray-500' };
+
+						//Recharts, the library used for creating the pie chart, expects actual color values (like hex codes or RGB values) for its `fill` property, not CSS class names.
+						//Recharts cannot understand tailwind
+						// Convert Tailwind class to CSS color
+						const colorMap: { [key: string]: string } = {
+							'bg-red-400': '#f87171',
+							'bg-blue-400': '#60a5fa',
+							'bg-green-400': '#4ade80',
+							'bg-yellow-400': '#fbbf24',
+							'bg-purple-400': '#a78bfa',
+							'bg-pink-400': '#f472b6',
+							'bg-indigo-400': '#818cf8',
+							'bg-teal-400': '#2dd4bf',
+							'bg-orange-400': '#fb923c',
+							'bg-cyan-400': '#22d3ee',
+							'bg-lime-400': '#a3e635',
+							'bg-amber-400': '#fbbf24',
+							'bg-violet-400': '#a78bfa',
+							'bg-fuchsia-400': '#e879f9',
+							'bg-rose-400': '#fb7185',
+							'bg-sky-400': '#38bdf8',
+							'bg-emerald-400': '#34d399',
+							'bg-gray-400': '#9ca3af',
+							'bg-gray-500': '#6b7280',
+						};
+
+						const chartColor = colorMap[bgColor] || '#6b7280'; // default gray
+
+						return <Cell key={`cell-${index}`} fill={chartColor} />;
+					})}
 				</Pie>
 				<Tooltip />
 				<Legend />

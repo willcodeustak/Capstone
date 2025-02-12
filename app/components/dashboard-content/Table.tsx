@@ -29,9 +29,15 @@ export default function Table({ transactions, budgets, onUpdate }: TableProps) {
 				{/* Table Body */}
 				<tbody className="divide-y divide-gray-200 dark:divide-gray-600 dark:text-white">
 					{transactions.map((transaction) => {
+						//find the budget by matching the budget_id of the transaction
 						const budget = budgets.find((b) => b.id === transaction.budget_id);
+
+						//if the budget exists, find its index in the budgets array to get the color
+						const budgetIndex = budgets.findIndex(
+							(b) => b.id === transaction.budget_id
+						);
 						const { bgColor } = budget
-							? getBudgetColor(budget.id)
+							? getBudgetColor(budgetIndex) //get the color based on the index of the budget
 							: { bgColor: 'bg-gray-500' };
 
 						return (

@@ -17,6 +17,7 @@ export default function RootLayout({
 				<TopNav />
 				<div className="flex">
 					<Navigation />
+
 					<main className="flex-1 p-8 bg-gray-50 dark:bg-gray-800 pl-72">
 						{children}
 					</main>
