@@ -8,9 +8,7 @@ function useLocalStorage<T>(
 ): [T, (value: SetValue<T>) => void] {
 	const [storedValue, setStoredValue] = useState(() => {
 		try {
-			// Get from local storage by key
 			const item = window.localStorage.getItem(key);
-
 			return item ? JSON.parse(item) : initialValue;
 		} catch (error) {
 			console.log(error);
@@ -18,21 +16,18 @@ function useLocalStorage<T>(
 		}
 	});
 
-	useEffect(() => {
+	const setValue = (value: SetValue<T>) => {
 		try {
-			// Allow value to be a function so we have same API as useState
 			const valueToStore =
-				typeof storedValue === 'function'
-					? storedValue(storedValue)
-					: storedValue;
-			// Save state
+				value instanceof Function ? value(storedValue) : value;
+			setStoredValue(valueToStore);
 			window.localStorage.setItem(key, JSON.stringify(valueToStore));
 		} catch (error) {
 			console.log(error);
 		}
-	}, [key, storedValue]);
+	};
 
-	return [storedValue, setStoredValue];
+	return [storedValue, setValue];
 }
 
 export default useLocalStorage;

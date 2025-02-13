@@ -13,9 +13,19 @@ export default function BudgetForm({ onBudgetAdded }: BudgetFormProps) {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+
 		const { data, error } = await supabase
 			.from('budgets')
-			.insert([{ title, amount }])
+			.insert([
+				{
+					title,
+					amount,
+					user_id: user?.id,
+				},
+			])
 			.select()
 			.single();
 

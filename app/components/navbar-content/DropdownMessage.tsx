@@ -35,7 +35,7 @@ const DropdownMessage = () => {
 			read: true,
 		};
 		setMessages((prev) => [...prev, newUserMessage]);
-		processMessageToGeminiAPI(question);
+		processMessageToGeminiAPI(question); //sends message as middleman
 	};
 
 	const handleSend = () => {
@@ -71,7 +71,7 @@ const DropdownMessage = () => {
 		const apiRequestBody = { contents: [{ parts: [{ text: userMessage }] }] };
 
 		try {
-			const API_KEY = process.env.VITE_API_GENERATIVE_LANGUAGE_CLIENT;
+			const API_KEY = process.env.NEXT_PUBLIC_API_GENERATIVE_LANGUAGE_CLIENT;
 			const response = await fetch(
 				`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
 				{
@@ -106,11 +106,11 @@ const DropdownMessage = () => {
 		}
 	};
 
-	useEffect(() => {
-		if (chatEndRef.current) {
-			chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-		}
-	}, [messages]);
+	// useEffect(() => {
+	// 	if (chatEndRef.current) {
+	// 		chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+	// 	}
+	// }, [messages]);
 
 	return (
 		<li className="relative list-none">
@@ -135,7 +135,7 @@ const DropdownMessage = () => {
 							className="text-white text-xl font-bold"
 							onClick={() => {
 								setDropdownOpen(false);
-								setShowPredefinedQuestions(true); 
+								setShowPredefinedQuestions(true);
 							}}
 						>
 							×
@@ -158,7 +158,9 @@ const DropdownMessage = () => {
 						</div>
 					)}
 					{!showPredefinedQuestions && (
-						<div className="flex-1 overflow-y-auto p-4 space-y-2">
+						<div className="flex-1 max-h-[300px] overflow-y-auto space-y-2 p-3">
+							{' '}
+							{/* Added max-h and overflow */}
 							{messages.map((msg, index) => (
 								<div
 									key={index}

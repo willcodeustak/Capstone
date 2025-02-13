@@ -8,6 +8,7 @@ import type { AuthError } from '@supabase/supabase-js';
 import { Toaster, toast } from 'react-hot-toast';
 import Image from 'next/image';
 import { getUser } from '../utils/auth';
+import Loading from '../components/loading';
 
 import signInPicture from '../images/signInPicture.jpg';
 
@@ -15,8 +16,10 @@ function LeftPanel() {
 	return (
 		<div className="flex flex-1 flex-col justify-center items-start bg-gradient-to-br to-indigo-600 text-black p-12">
 			<div className="text-left">
-				<h2 className="text-5xl font-extrabold mb-4">BudgetBreeze</h2>
-				<p className="text-xl italic">
+				<h2 className="text-5xl font-extrabold mb-4 dark:text-white">
+					BudgetBreeze
+				</h2>
+				<p className="text-xl italic dark:text-white">
 					Personal budgeting is a key step toward financial freedom. Start with
 					BudgetBreeze today.
 				</p>
@@ -38,11 +41,14 @@ export default function SigninPage() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false); 
 	const router = useRouter();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
+		setLoading(true); 
+
 		try {
 			const { error } = await signIn(email, password);
 			if (error) throw error;
@@ -57,6 +63,7 @@ export default function SigninPage() {
 
 			setTimeout(() => router.push('/dashboard'), 1500);
 		} catch (err) {
+			setLoading(false); 
 			const authError = err as AuthError;
 			toast.error(authError.message, {
 				className: 'text-xl p-4 min-w-[300px]',
@@ -64,15 +71,19 @@ export default function SigninPage() {
 		}
 	};
 
+	if (loading) {
+		return <Loading />;
+	}
+
 	return (
 		<div className="min-h-screen flex">
 			<Toaster />
 			<LeftPanel />
 
-			<div className="w-1/2 flex items-center justify-center bg-white-50 p-12 relative">
+			<div className="w-1/2 flex items-center justify-center bg-white-50 p-12 relative ">
 				<div className="absolute left-0 h-1/2 w-px bg-gray-300"></div>
 				<div className="max-w-md w-full space-y-8">
-					<h2 className="text-3xl font-extrabold text-gray-900 text-center">
+					<h2 className="text-3xl font-extrabold text-gray-900 text-center dark:text-white">
 						Sign in to your account
 					</h2>
 
@@ -88,7 +99,7 @@ export default function SigninPage() {
 									type="email"
 									autoComplete="email"
 									required
-									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
 									placeholder="Email address"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -104,7 +115,7 @@ export default function SigninPage() {
 									type="password"
 									autoComplete="current-password"
 									required
-									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
 									placeholder="Password"
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}

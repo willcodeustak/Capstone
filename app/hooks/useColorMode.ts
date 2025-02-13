@@ -11,13 +11,17 @@ export default function useColorMode() {
 		if (storedColorMode) {
 			setColorMode(storedColorMode);
 		} else {
-			setColorMode('light'); // Default to light mode
+			setColorMode('light');
 		}
 	}, []);
 
 	useEffect(() => {
-		localStorage.setItem('color-mode', colorMode);
-		document.documentElement.classList.toggle('dark', colorMode === 'dark');
+		const className = 'dark';
+		const htmlElement = window.document.documentElement; // changed body selection to html
+
+		colorMode === 'dark'
+			? htmlElement.classList.add(className)
+			: htmlElement.classList.remove(className);
 	}, [colorMode]);
 
 	return [colorMode, setColorMode] as const;

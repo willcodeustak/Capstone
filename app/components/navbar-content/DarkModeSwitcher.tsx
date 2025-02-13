@@ -20,7 +20,7 @@ const DarkModeSwitcher = () => {
 					type="checkbox"
 					checked={colorMode === 'dark'}
 					onChange={toggleColorMode}
-					className=" cursor-pointer opacity-0"
+					className="cursor-pointer opacity-0"
 				/>
 				<span
 					className={`absolute top-1/2 left-[3px] flex h-6 w-6 -translate-y-1/2 translate-x-0 items-center justify-center rounded-full bg-white shadow-switcher duration-75 ease-linear ${

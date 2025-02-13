@@ -42,7 +42,7 @@ export async function getUser() {
 	return user;
 }
 
-// Custom hook for authentication
+//authentication hook
 export function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ export function useAuth() {
 	useEffect(() => {
 		const {
 			data: { subscription },
-			//function listens for changes in the user's authentication state
+			//function listens for changes in the user authentication state
 		} = supabase.auth.onAuthStateChange((event, session) => {
 			setUser(session?.user ?? null);
 			setLoading(false);
@@ -63,14 +63,12 @@ export function useAuth() {
 	}, []);
 	const signOutAndRedirect = async () => {
 		await signOut();
-		toast.success('Until next time! ', {
+		setColorMode('light');
+		toast.success('Until next time!', {
 			className: 'text-xl p-4 min-w-[300px]',
 		});
-		setUser(null);
-		setColorMode('light');
 		router.push('/signin');
 	};
-	// await supabase.auth.signOut();
 
 	return { user, loading, signUp, signIn, signOutAndRedirect, getUser };
 }

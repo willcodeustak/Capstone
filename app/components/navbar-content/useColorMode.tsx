@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import useLocalStorage from './useLocalStorage';
 
@@ -10,14 +8,12 @@ const useColorMode = () => {
 		const className = 'dark';
 		const bodyClass = window.document.body.classList;
 
-		if (colorMode === 'dark') {
-			bodyClass.add(className);
-		} else {
-			bodyClass.remove(className);
-		}
+		colorMode === 'dark'
+			? bodyClass.add(className)
+			: bodyClass.remove(className);
 	}, [colorMode]);
 
-	return [colorMode, setColorMode];
+	return [colorMode, setColorMode] as const;
 };
 
 export default useColorMode;

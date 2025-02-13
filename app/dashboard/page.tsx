@@ -13,12 +13,18 @@ export default function DashboardPage() {
 	const [transactions, setTransactions] = useState<any[]>([]);
 	const [visibleBudgets, setVisibleBudgets] = useState<Budget[]>([]);
 	const [page, setPage] = useState(0);
-	const [isCascading, setIsCascading] = useState(true); 
+	const [isCascading, setIsCascading] = useState(true);
 
 	const fetchBudgets = async () => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+
 		const { data, error } = await supabase
 			.from('budgets')
 			.select('*')
+			.eq('user_id', user?.id)
+
 			.order('created_at', { ascending: true });
 
 		if (error) {
@@ -29,9 +35,15 @@ export default function DashboardPage() {
 	};
 
 	const fetchTransactions = async () => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+
 		const { data, error } = await supabase
 			.from('transactions')
 			.select('*')
+			.eq('user_id', user?.id)
+
 			.order('date', { ascending: false });
 
 		if (error) {
@@ -68,13 +80,13 @@ export default function DashboardPage() {
 
 	const nextPage = () => {
 		if ((page + 1) * 8 < budgets.length) {
-			setPage(page + 1); 
+			setPage(page + 1);
 		}
 	};
 
 	const prevPage = () => {
 		if (page > 0) {
-			setPage(page - 1); 
+			setPage(page - 1);
 		}
 	};
 
@@ -115,8 +127,8 @@ export default function DashboardPage() {
 						<div
 							className={`grid ${
 								isCascading
-									? 'grid-cols-4' 
-									: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' 
+									? 'grid-cols-4'
+									: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
 							} gap-6`}
 						>
 							{isCascading

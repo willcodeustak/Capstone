@@ -7,8 +7,9 @@ import { useAuth } from '../../../utils/auth';
 export default function Navigation() {
 	const { user, signOutAndRedirect } = useAuth();
 	if (!user) {
-		return null; // simply hides from user if !user
+		return null;
 	}
+
 	return (
 		<nav className="w-65 bg-gray-800 text-white h-screen shadow-lg fixed top-0 left-0 z-50">
 			<div className="p-4 border-b border-gray-700">

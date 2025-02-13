@@ -12,8 +12,10 @@ function LeftPanel() {
 	return (
 		<div className="flex flex-1 flex-col justify-center items-start bg-gradient-to-br to-indigo-600 text-black p-12 ">
 			<div className="text-left">
-				<h2 className="text-5xl font-extrabold mb-4">BudgetBreeze</h2>
-				<p className="text-xl italic">
+				<h2 className="text-5xl font-extrabold mb-4 dark:text-white">
+					BudgetBreeze
+				</h2>
+				<p className="text-xl italic dark:text-white">
 					Personal budgeting is a key step toward financial freedom. Start with
 					BudgetBreeze today.
 				</p>
@@ -65,12 +67,13 @@ export default function SignUp() {
 			<div className="w-1/2 flex items-center justify-center bg-white-50 p-12 relative">
 				<div className="absolute left-0  h-1/2 w-px bg-gray-300"></div>
 				<div className="max-w-md w-full space-y-8">
-					<h2 className="text-3xl font-extrabold text-gray-900 text-center">
+					<h2 className="text-3xl font-extrabold text-gray-900 text-center dark:text-white">
 						Create a new account
 					</h2>
 
 					<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-						<div className="rounded-md shadow-sm -space-y-px">
+						<div className="rounded-md shadow-sm space-y-4">
+							{' '}
 							<div>
 								<label htmlFor="user-name" className="sr-only">
 									User Name
@@ -81,7 +84,7 @@ export default function SignUp() {
 									value={displayName}
 									onChange={(e) => setDisplayName(e.target.value)}
 									required
-									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
 								/>
 							</div>
 							<div>
@@ -94,7 +97,7 @@ export default function SignUp() {
 									type="email"
 									autoComplete="email"
 									required
-									className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
 									placeholder="Email address"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -110,7 +113,7 @@ export default function SignUp() {
 									type="password"
 									autoComplete="new-password"
 									required
-									className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg"
+									className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
 									placeholder="Password"
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}

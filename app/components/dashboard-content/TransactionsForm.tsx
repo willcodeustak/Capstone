@@ -26,6 +26,10 @@ export default function TransactionsForm({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+
 		// console.log('Selected Budget ID (onSubmit):', selectedBudgetId);
 
 		if (!selectedBudgetId) {
@@ -68,6 +72,7 @@ export default function TransactionsForm({
 					title,
 					amount: Number(amount),
 					budget_id: selectedBudgetId,
+					user_id: user?.id,
 					date: new Date().toISOString(),
 				},
 			]);
