@@ -9,24 +9,34 @@ import { Toaster, toast } from 'react-hot-toast';
 import Image from 'next/image';
 import { getUser } from '../utils/auth';
 import Loading from '../components/loading';
-
-import signInPicture from '../images/signInPicture.jpg';
+import triple from '../images/triple.png';
+import breeze from '../images/breeze.jpg';
 
 function LeftPanel() {
 	return (
 		<div className="flex flex-1 flex-col justify-center items-start bg-gradient-to-br to-indigo-600 text-black p-12">
-			<div className="text-left">
-				<h2 className="text-5xl font-extrabold mb-4 dark:text-white">
+			<div className="text-left flex items-center space-x-3">
+				<Image
+					src={triple}
+					alt="Triple Image"
+					width={60}
+					height={60}
+					className="object-contain"
+				/>
+
+				<h2 className="text-5xl font-extrabold dark:text-white">
 					BudgetBreeze
 				</h2>
-				<p className="text-xl italic dark:text-white">
-					Personal budgeting is a key step toward financial freedom. Start with
-					BudgetBreeze today.
-				</p>
 			</div>
+
+			<p className="text-xl italic dark:text-white mt-4">
+				Personal budgeting is a key step toward financial freedom. Start with
+				BudgetBreeze today.
+			</p>
+
 			<div className="mt-12">
 				<Image
-					src={signInPicture}
+					src={breeze}
 					alt="Business illustration"
 					width={800}
 					height={500}
@@ -36,7 +46,6 @@ function LeftPanel() {
 		</div>
 	);
 }
-
 export default function SigninPage() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');

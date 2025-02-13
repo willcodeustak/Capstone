@@ -91,7 +91,7 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="min-h-screen flex flex-col">
+		<div className="min-h-screen flex flex-col ml-0">
 			<Toaster position="top-center" />
 			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:text-white">
 				Budget Overview
