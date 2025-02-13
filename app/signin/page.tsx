@@ -41,13 +41,13 @@ export default function SigninPage() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false); 
+	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
-		setLoading(true); 
+		setLoading(true);
 
 		try {
 			const { error } = await signIn(email, password);
@@ -63,7 +63,7 @@ export default function SigninPage() {
 
 			setTimeout(() => router.push('/dashboard'), 1500);
 		} catch (err) {
-			setLoading(false); 
+			setLoading(false);
 			const authError = err as AuthError;
 			toast.error(authError.message, {
 				className: 'text-xl p-4 min-w-[300px]',
@@ -88,7 +88,7 @@ export default function SigninPage() {
 					</h2>
 
 					<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-						<div className="rounded-md shadow-sm -space-y-px">
+						<div className="rounded-md shadow-sm space-y-4">
 							<div>
 								<label htmlFor="email-address" className="sr-only">
 									Email address

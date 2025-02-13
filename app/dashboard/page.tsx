@@ -91,7 +91,7 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<>
+		<div className="min-h-screen flex flex-col">
 			<Toaster position="top-center" />
 			<h1 className="text-5xl font-extrabold text-gray-900 text-center mb-10 dark:text-white">
 				Budget Overview
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 				</div>
 
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700">
-					<h2 className="text-2xl font-semibold text-gray-700 mb-4 dark:text-white">
+					<h2 className="text-2xl font-semibold text-gray-700 mb-4 dark:text-white ">
 						Add Transaction
 					</h2>
 					<TransactionsForm
@@ -120,9 +120,19 @@ export default function DashboardPage() {
 			{/* Budgets Section */}
 			<div className="space-y-8">
 				<div>
-					<h2 className="text-3xl font-semibold text-gray-800 mb-6 dark:text-white">
-						Your Budgets
-					</h2>
+					{/* Budget Title and Toggle Button */}
+					<div className="flex justify-between items-center mb-6">
+						<h2 className="text-3xl font-semibold text-gray-800 dark:text-white">
+							Your Budgets
+						</h2>
+						<button
+							onClick={() => setIsCascading(!isCascading)}
+							className="px-4 py-2 bg-blue-500 text-white rounded-md"
+						>
+							Toggle {isCascading ? 'Grid Layout' : 'Cascade Layout'}
+						</button>
+					</div>
+
 					<div className="w-full">
 						<div
 							className={`grid ${
@@ -172,15 +182,7 @@ export default function DashboardPage() {
 						</div>
 					)}
 				</div>
-				{/* Toggle Button for Layout */}
-				<div className="mb-6 text-center">
-					<button
-						onClick={() => setIsCascading(!isCascading)}
-						className="px-4 py-2 bg-blue-500 text-white rounded-md"
-					>
-						Toggle {isCascading ? 'Grid Layout' : 'Cascade Layout'}
-					</button>
-				</div>
+
 				{/* Transactions Section */}
 				<div>
 					<h2 className="text-3xl font-semibold text-gray-800 mb-6 dark:text-white">
@@ -193,6 +195,6 @@ export default function DashboardPage() {
 					/>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }

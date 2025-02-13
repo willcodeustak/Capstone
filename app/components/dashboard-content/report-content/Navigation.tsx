@@ -5,7 +5,7 @@ import { Home, PieChart, LogOut } from 'lucide-react';
 import { useAuth } from '../../../utils/auth';
 
 export default function Navigation() {
-	const { user, signOutAndRedirect } = useAuth();
+	const { user } = useAuth();
 	if (!user) {
 		return null;
 	}

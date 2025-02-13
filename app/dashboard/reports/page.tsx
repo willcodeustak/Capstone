@@ -30,28 +30,42 @@ export default function Reports() {
 
 	const filterTransactionsByPeriod = (period: 'day' | 'week' | 'month') => {
 		const date = new Date(selectedDate);
+
 		return transactions.filter((transaction) => {
 			const transDate = new Date(transaction.date);
+
 			switch (period) {
-				case 'day':
-					return transDate.toDateString() === date.toDateString();
-				case 'week':
+				case 'day': {
+					const startOfDay = new Date(date);
+					startOfDay.setHours(0, 0, 0, 0);
+					const endOfDay = new Date(date);
+					endOfDay.setHours(23, 59, 59, 999);
+					return transDate >= startOfDay && transDate <= endOfDay;
+				}
+				case 'week': {
+					const dayOfWeek = date.getDay();
+					const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 					const weekStart = new Date(date);
-					weekStart.setDate(date.getDate() - date.getDay());
+					weekStart.setDate(date.getDate() - diffToMonday);
+					weekStart.setHours(0, 0, 0, 0);
+
 					const weekEnd = new Date(weekStart);
 					weekEnd.setDate(weekStart.getDate() + 6);
+					weekEnd.setHours(23, 59, 59, 999);
+
 					return transDate >= weekStart && transDate <= weekEnd;
-				case 'month':
-					return (
-						transDate.getMonth() === date.getMonth() &&
-						transDate.getFullYear() === date.getFullYear()
-					);
+				}
+				case 'month': {
+					const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+					const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+					monthEnd.setHours(23, 59, 59, 999);
+					return transDate >= monthStart && transDate <= monthEnd;
+				}
 				default:
 					return true;
 			}
 		});
 	};
-
 	const processChartData = (transactions: any[]) => {
 		return transactions.reduce((acc, transaction) => {
 			const budget = budgets.find((b) => b.id === transaction.budget_id);
@@ -81,6 +95,58 @@ export default function Reports() {
 		);
 	};
 
+	const getDailyDateString = (date: Date) => {
+		return date.toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric',
+			year: 'numeric',
+		});
+	};
+	// const getWeekRangeString = (date: Date) => {
+	// 	const start = new Date(date);
+	// 	start.setDate(date.getDate() - date.getDay() + 1);
+	// 	const end = new Date(start);
+	// 	end.setDate(start.getDate() + 6);
+
+	// 	return `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+	// };
+
+	// const getMonthString = (date: Date) => {
+	// 	return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+	// };
+
+	const getWeeklyDateRange = (date: Date) => {
+		const start = new Date(date); //new date object to avoid messing up the original
+		const dayOfWeek = start.getDay(); //current day of the week (0 - Sunday, 1 - Monday)
+
+		//force Monday. If it's sunday (day 0), set to previous monday (6 days ago), otherwise move back to monday
+		const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+		start.setDate(start.getDate() + diffToMonday); // Set the date to the previous Monday
+
+		const end = new Date(start); //object for the end of the week
+		end.setDate(start.getDate() + 6); //6 days after the start (Sunday)
+
+		const options: Intl.DateTimeFormatOptions = {
+			month: 'short',
+			day: 'numeric',
+		};
+
+		const yearString =
+			start.getFullYear() !== end.getFullYear() ? `, ${end.getFullYear()}` : '';
+
+		return `${start.toLocaleDateString(
+			'en-US',
+			options
+		)} - ${end.toLocaleDateString('en-US', options)}${yearString}`;
+	};
+
+	const getMonthlyDateString = (date: Date) => {
+		return date.toLocaleDateString('en-US', {
+			month: 'long',
+			year: 'numeric',
+		});
+	};
+
 	const dailyTransactions = filterTransactionsByPeriod('day');
 	const weeklyTransactions = filterTransactionsByPeriod('week');
 	const monthlyTransactions = filterTransactionsByPeriod('month');
@@ -103,19 +169,28 @@ export default function Reports() {
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
-					<h2 className="text-xl font-semibold mb-4 ">Daily Total</h2>
+					<h2 className="text-xl font-semibold mb-4 ">
+						{' '}
+						Daily Total ({getDailyDateString(selectedDate)})
+					</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(dailyTransactions).toFixed(2)}
 					</p>
 				</div>
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
-					<h2 className="text-xl font-semibold mb-4 ">Weekly Total</h2>
+					<h2 className="text-xl font-semibold mb-4 ">
+						{' '}
+						Weekly Total ({getWeeklyDateRange(selectedDate)})
+					</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(weeklyTransactions).toFixed(2)}
 					</p>
 				</div>
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
-					<h2 className="text-xl font-semibold mb-4">Monthly Total</h2>
+					<h2 className="text-xl font-semibold mb-4">
+						{' '}
+						Monthly Total ({getMonthlyDateString(selectedDate)})
+					</h2>
 					<p className="text-3xl font-bold">
 						${calculateTotal(monthlyTransactions).toFixed(2)}
 					</p>
@@ -128,20 +203,23 @@ export default function Reports() {
 					<ExpenseChart
 						expenses={processChartData(dailyTransactions)}
 						budgets={budgets}
+						transactions={dailyTransactions}
 					/>
 				</div>
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Weekly Breakdown</h2>
 					<ExpenseChart
-						expenses={processChartData(dailyTransactions)}
+						expenses={processChartData(weeklyTransactions)}
 						budgets={budgets}
+						transactions={weeklyTransactions}
 					/>
 				</div>
 				<div className="bg-white p-6 rounded-xl shadow-md dark:bg-gray-700 dark:text-white">
 					<h2 className="text-xl font-semibold mb-4">Monthly Breakdown</h2>
 					<ExpenseChart
-						expenses={processChartData(dailyTransactions)}
+						expenses={processChartData(monthlyTransactions)}
 						budgets={budgets}
+						transactions={monthlyTransactions}
 					/>
 				</div>
 			</div>

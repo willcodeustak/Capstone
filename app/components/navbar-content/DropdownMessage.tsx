@@ -160,7 +160,6 @@ const DropdownMessage = () => {
 					{!showPredefinedQuestions && (
 						<div className="flex-1 max-h-[300px] overflow-y-auto space-y-2 p-3">
 							{' '}
-							{/* Added max-h and overflow */}
 							{messages.map((msg, index) => (
 								<div
 									key={index}

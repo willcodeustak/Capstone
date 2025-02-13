@@ -52,7 +52,7 @@ export default function TransactionsForm({
 		}
 		const newSpent = (selectedBudget.spent || 0) + Number(amount);
 
-		// Update budget's spent amount in the database
+		//update budget's
 		const { error: budgetError } = await supabase
 			.from('budgets')
 			.update({ spent: newSpent })
@@ -64,7 +64,7 @@ export default function TransactionsForm({
 			return;
 		}
 
-		// Add the Transactions to the database
+		//update transactions
 		const { error: transactionsError } = await supabase
 			.from('transactions')
 			.insert([
@@ -99,7 +99,7 @@ export default function TransactionsForm({
 	// If there are no budgets, tell user they need to create a budget first before able to add a Transactions
 	if (budgets.length === 0) {
 		return (
-			<div className="p-4 bg-yellow-100 rounded-lg text-yellow-800">
+			<div className="p-4 bg-yellow-100 rounded-lg text-yellow-800 ">
 				Please create a budget first to add transactions.
 			</div>
 		);
@@ -112,7 +112,7 @@ export default function TransactionsForm({
 				value={title}
 				onChange={(e) => setTitle(e.target.value)}
 				placeholder="Transaction Title"
-				className="border p-2 w-full"
+				className="border p-2 w-full "
 				required
 			/>
 			<input

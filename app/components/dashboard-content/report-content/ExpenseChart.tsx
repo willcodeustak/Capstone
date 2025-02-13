@@ -14,9 +14,14 @@ import { getBudgetColor } from '../../../utils/colors';
 interface ExpenseChartProps {
 	expenses: { name: string; value: number; budgetId?: string }[];
 	budgets: Budget[];
+	transactions: any[];
 }
 
-export default function ExpenseChart({ expenses, budgets }: ExpenseChartProps) {
+export default function ExpenseChart({
+	expenses,
+	budgets,
+	transactions,
+}: ExpenseChartProps) {
 	const data = expenses;
 
 	if (data.length === 0) {
@@ -34,6 +39,16 @@ export default function ExpenseChart({ expenses, budgets }: ExpenseChartProps) {
 					data={data}
 					cx="50%"
 					cy="50%"
+					label={({ value, payload }) => {
+						//find the transaction that matches the value and budgetId
+						const transaction = transactions.find(
+							(t) => t.budget_id === payload.budgetId && t.amount === value
+						);
+						//date on pie
+						return transaction
+							? new Date(transaction.date).toLocaleDateString()
+							: '';
+					}}
 					labelLine={false}
 					outerRadius={80}
 					fill="#8884d8"
@@ -41,17 +56,15 @@ export default function ExpenseChart({ expenses, budgets }: ExpenseChartProps) {
 				>
 					{data.map((entry, index) => {
 						//find the budget associated with the expense
+
 						const budget = budgets.find((b) =>
 							entry.budgetId ? b.id === entry.budgetId : b.title === entry.name
 						);
-						//get the index of the budget in the budgets array
 						const budgetIndex = budget ? budgets.indexOf(budget) : -1;
-						//use the same getBudgetColor function to get the color
 						const { bgColor } =
 							budgetIndex !== -1
 								? getBudgetColor(budgetIndex)
 								: { bgColor: 'bg-gray-500' };
-
 						//Recharts, the library used for creating the pie chart, expects actual color values (like hex codes or RGB values) for its `fill` property, not CSS class names.
 						//Recharts cannot understand tailwind
 						// Convert Tailwind class to CSS color
@@ -77,8 +90,7 @@ export default function ExpenseChart({ expenses, budgets }: ExpenseChartProps) {
 							'bg-gray-500': '#6b7280',
 						};
 
-						const chartColor = colorMap[bgColor] || '#6b7280'; // default gray
-
+						const chartColor = colorMap[bgColor] || '#6b7280';
 						return <Cell key={`cell-${index}`} fill={chartColor} />;
 					})}
 				</Pie>

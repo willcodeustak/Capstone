@@ -67,13 +67,13 @@ export default function BudgetItem({
 						type="text"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
-						className="border p-2 w-full"
+						className="border p-2 w-full bg-gray-300 dark:text-black"
 					/>
 					<input
 						type="number"
 						value={amount}
 						onChange={(e) => setAmount(Number(e.target.value))}
-						className="border p-2 w-full"
+						className="border p-2 w-full bg-gray-300 dark:text-black"
 					/>
 					<div className="flex space-x-2 dark:bg-gray-700">
 						<button
@@ -84,7 +84,7 @@ export default function BudgetItem({
 						</button>
 						<button
 							onClick={() => setIsEditing(false)}
-							className="bg-gray-500 text-white px-4 py-2"
+							className="bg-gray-500 text-white px-4 py-2 "
 						>
 							Cancel
 						</button>
@@ -92,9 +92,11 @@ export default function BudgetItem({
 				</div>
 			) : (
 				<div>
-					<div className="flex text-lg mb-2">
-						<h2 className="text-2xl font-bold mb-2">{budget.title}</h2>
-						<span className="font-bold ml-auto">
+					<div className="flex items-center justify-between mb-2">
+						<h2 className="text-2xl font-bold break-words max-w-[70%]">
+							{budget.title}
+						</h2>
+						<span className="font-bold whitespace-nowrap">
 							Budget: ${budget.amount.toFixed(2)}
 						</span>
 					</div>

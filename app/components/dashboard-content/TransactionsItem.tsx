@@ -15,15 +15,22 @@ export default function TransactionsItem({
 	const [isEditing, setIsEditing] = useState(false);
 	const [newTitle, setNewTitle] = useState(transactions.title);
 	const [newAmount, setNewAmount] = useState(transactions.amount);
-	const budget = budgets.find((budget) => budget.id === transactions.budget_id);
+	const [newDate, setNewDate] = useState(transactions.date.split('T')[0]);
+	const [newBudgetId, setNewBudgetId] = useState(transactions.budget_id);
 	const { confirmDelete } = useConfirmDelete();
 
 	const handleUpdate = async () => {
 		const amountDifference = newAmount - transactions.amount;
 
+		//update transaction
 		const { error: transactionsError } = await supabase
 			.from('transactions')
-			.update({ title: newTitle, amount: newAmount })
+			.update({
+				title: newTitle,
+				amount: newAmount,
+				date: newDate,
+				budget_id: newBudgetId,
+			})
 			.eq('id', transactions.id);
 
 		if (transactionsError) {
@@ -32,20 +39,29 @@ export default function TransactionsItem({
 			return;
 		}
 
-		const selectedBudget = budgets.find((b) => b.id === transactions.budget_id);
-		if (selectedBudget) {
-			const newSpent = selectedBudget.spent + amountDifference;
+		//update old budget if budget changed
+		if (transactions.budget_id !== newBudgetId) {
+			const oldBudget = budgets.find((b) => b.id === transactions.budget_id);
+			if (oldBudget) {
+				const newSpent = oldBudget.spent - transactions.amount;
+				await supabase
+					.from('budgets')
+					.update({ spent: newSpent })
+					.eq('id', oldBudget.id);
+			}
+		}
 
-			const { error: budgetError } = await supabase
+		//update new budget
+		const selectedBudget = budgets.find((b) => b.id === newBudgetId);
+		if (selectedBudget) {
+			const newSpent =
+				selectedBudget.spent +
+				(transactions.budget_id === newBudgetId ? amountDifference : newAmount);
+
+			await supabase
 				.from('budgets')
 				.update({ spent: newSpent })
 				.eq('id', selectedBudget.id);
-
-			if (budgetError) {
-				console.error('Error updating budget:', budgetError);
-				toast.error('Failed to update budget');
-				return;
-			}
 		}
 
 		onUpdate();
@@ -87,7 +103,6 @@ export default function TransactionsItem({
 				}
 
 				onUpdate();
-				// toast.success('Transaction deleted successfully');
 			}
 		);
 	};
@@ -100,7 +115,7 @@ export default function TransactionsItem({
 						type="text"
 						value={newTitle}
 						onChange={(e) => setNewTitle(e.target.value)}
-						className="border rounded px-2 py-1 w-full"
+						className="border rounded px-2 py-1 w-full bg-gray-300 dark:text-black"
 					/>
 				) : (
 					transactions.title
@@ -112,19 +127,40 @@ export default function TransactionsItem({
 						type="number"
 						value={newAmount}
 						onChange={(e) => setNewAmount(Number(e.target.value))}
-						className="border rounded px-2 py-1 w-full"
+						className="border rounded px-2 py-1 w-full bg-gray-300 dark:text-black"
 					/>
 				) : (
 					`$${transactions.amount.toFixed(2)}`
 				)}
 			</td>
-			<td className="px-6 py-4 whitespace-nowrap">
-				{new Date(transactions.date).toLocaleDateString()}
+			<td className="px-6 py-4 whitespace-nowrap ">
+				{isEditing ? (
+					<input
+						type="date"
+						value={newDate}
+						onChange={(e) => setNewDate(e.target.value)}
+						className="border rounded px-2 py-1 w-full bg-gray-300 dark:text-black"
+					/>
+				) : (
+					new Date(transactions.date).toLocaleDateString()
+				)}
 			</td>
 			<td className="px-6 py-4 whitespace-nowrap">
-				{budget ? (
+				{isEditing ? (
+					<select
+						value={newBudgetId}
+						onChange={(e) => setNewBudgetId(e.target.value)}
+						className="border rounded px-2 py-1 w-full bg-gray-300 dark:text-black"
+					>
+						{budgets.map((budget) => (
+							<option key={budget.id} value={budget.id}>
+								{budget.title}
+							</option>
+						))}
+					</select>
+				) : budgets.find((b) => b.id === transactions.budget_id) ? (
 					<span className={`px-2 py-1 rounded ${budgetColor} text-white`}>
-						{budget.title}
+						{budgets.find((b) => b.id === transactions.budget_id)?.title}
 					</span>
 				) : (
 					'Budget deleted'
